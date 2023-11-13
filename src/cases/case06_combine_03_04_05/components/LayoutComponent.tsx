@@ -6,6 +6,7 @@ import TableAndFormComponent from "./TableAndFormComponent";
 import Sider from "antd/es/layout/Sider";
 import { Content, Footer } from "antd/es/layout/layout";
 import { Tags } from "../model/http_data";
+import InputOptions from "./InputOptions";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -63,14 +64,7 @@ const LayoutComponent = (props: Props) => {
               path={path}
               element={
                 <div style={{ padding: 20, margin: "20px 20px 20px 220px", minHeight: 360, background: colorBgContainer }}>
-                  {h.cookie && (
-                    <TableAndFormComponent
-                      recordInputType={h.cookie}
-                      usecaseName={h.usecase}
-                      attributeParamType="cookie"
-                    />
-                  )}
-                  {h.header && (
+                  {/* {h.header && (
                     <TableAndFormComponent
                       recordInputType={h.header}
                       usecaseName={h.usecase}
@@ -97,7 +91,11 @@ const LayoutComponent = (props: Props) => {
                       usecaseName={h.usecase}
                       attributeParamType="body"
                     />
-                  )}
+                  )} */}
+
+                  <>
+                    <InputOptions />
+                  </>
                 </div>
               }
             />

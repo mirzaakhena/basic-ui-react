@@ -76,12 +76,12 @@ const TableAndFormComponent = (props: Props) => {
     const value = form.getFieldsValue();
     if (value) {
       const data = JSON.stringify(value);
-      localStorage.setItem(props.usecaseName, data);
+      localStorage.setItem(`${props.attributeParamType}_${props.usecaseName}`, data);
     }
   });
 
   const resetFieldValues = () => {
-    const savedState = localStorage.getItem(props.usecaseName);
+    const savedState = localStorage.getItem(`${props.attributeParamType}_${props.usecaseName}`);
     const jsonObj = savedState ? JSON.parse(savedState)[props.usecaseName] : null;
     const data = generateInitialValue(props.recordInputType, jsonObj);
     form.setFieldsValue({ [props.usecaseName]: { ...data } });
