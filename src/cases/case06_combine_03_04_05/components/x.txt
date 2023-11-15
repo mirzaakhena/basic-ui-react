@@ -1,0 +1,29 @@
+// <div style={{ padding: 20, margin: "20px 20px 20px 220px", minHeight: 360 }}></div>
+                   {h.header && (
+                    <TableAndFormComponent
+                      recordInputType={h.header}
+                      usecaseName={h.usecase}
+                      attributeParamType="header"
+                    />
+                  )}
+                  {h.param && (
+                    <TableAndFormComponent
+                      recordInputType={h.param}
+                      usecaseName={h.usecase}
+                      attributeParamType="param"
+                    />
+                  )}
+                  {h.query && (
+                    <TableAndFormComponent
+                      recordInputType={h.query}
+                      usecaseName={h.usecase}
+                      attributeParamType="query"
+                    />
+                  )}
+                  {h.body && (
+                    <TableAndFormComponent
+                      recordInputType={h.body}
+                      usecaseName={h.usecase}
+                      attributeParamType="body"
+                    />
+                  )} 

@@ -1,6 +1,6 @@
 //
 
-import { Button, Form, Table } from "antd";
+import { Button, Form, Table, theme } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -96,20 +96,33 @@ const TableAndFormComponent = (props: Props) => {
 
   setTimeout(() => initialized && resetFieldValues(), 50);
 
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
+
   return (
     <>
-      <h1>{props.attributeParamType}</h1>
       <Form
+        style={{ background: colorBgContainer, padding: "20px" }}
         form={form}
         onChange={onChange}
         onFinish={(x) => console.log(x)}
         layout="vertical"
       >
-        {generateForm(props.recordInputType, [pascalToCamel(props.usecaseName)], onChange)}
-
+        <div
+          style={{
+            overflowY: "scroll",
+            maxHeight: "calc(100vh - 310px)",
+            padding: "0px 20px 10px 0px",
+            border: "none",
+          }}
+        >
+          {generateForm(props.recordInputType, [pascalToCamel(props.usecaseName)], onChange)}
+        </div>
+        {/* 
         <Form.Item>
           <Button htmlType="submit">Submit</Button>
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </>
   );

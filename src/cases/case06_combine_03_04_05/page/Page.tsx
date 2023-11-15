@@ -17,6 +17,21 @@ const Page = () => {
                   method: "post",
                   path: "/user/create",
                   tag: "user",
+                  query: {
+                    page: {
+                      type: "number",
+                      default: 1,
+                    },
+                    size: {
+                      type: "number",
+                      default: 10,
+                    },
+                  },
+                  param: {
+                    userId: {
+                      type: "string",
+                    },
+                  },
                   body: {
                     nama: {
                       type: "string",

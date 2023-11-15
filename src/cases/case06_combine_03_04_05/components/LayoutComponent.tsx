@@ -1,12 +1,12 @@
 import { FileOutlined } from "@ant-design/icons";
 import { Layout, Menu, MenuProps, theme } from "antd";
-import React from "react";
-import { NavLink, Route, Routes } from "react-router-dom";
-import TableAndFormComponent from "./TableAndFormComponent";
 import Sider from "antd/es/layout/Sider";
 import { Content, Footer } from "antd/es/layout/layout";
+import React from "react";
+import { NavLink, Route, Routes } from "react-router-dom";
 import { Tags } from "../model/http_data";
 import InputOptions from "./InputOptions";
+import ContentComponent from "./ContentComponent";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -29,9 +29,9 @@ interface Props {
 const LayoutComponent = (props: Props) => {
   //
 
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+  // const {
+  //   token: { colorBgContainer },
+  // } = theme.useToken();
 
   const menuItems = props.tags.map((menuItem) => {
     //
@@ -63,39 +63,8 @@ const LayoutComponent = (props: Props) => {
               key={path}
               path={path}
               element={
-                <div style={{ padding: 20, margin: "20px 20px 20px 220px", minHeight: 360, background: colorBgContainer }}>
-                  {/* {h.header && (
-                    <TableAndFormComponent
-                      recordInputType={h.header}
-                      usecaseName={h.usecase}
-                      attributeParamType="header"
-                    />
-                  )}
-                  {h.param && (
-                    <TableAndFormComponent
-                      recordInputType={h.param}
-                      usecaseName={h.usecase}
-                      attributeParamType="param"
-                    />
-                  )}
-                  {h.query && (
-                    <TableAndFormComponent
-                      recordInputType={h.query}
-                      usecaseName={h.usecase}
-                      attributeParamType="query"
-                    />
-                  )}
-                  {h.body && (
-                    <TableAndFormComponent
-                      recordInputType={h.body}
-                      usecaseName={h.usecase}
-                      attributeParamType="body"
-                    />
-                  )} */}
-
-                  <>
-                    <InputOptions />
-                  </>
+                <div style={{ margin: "0px 0px 20px 200px" }}>
+                  <ContentComponent httpData={h} />
                 </div>
               }
             />

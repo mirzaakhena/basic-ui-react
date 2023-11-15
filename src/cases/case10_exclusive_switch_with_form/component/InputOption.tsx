@@ -1,7 +1,6 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row, Space, Switch, theme } from "antd";
+import { Button, Col, Form, Input, Row, Space, Switch } from "antd";
 import { useForm } from "antd/lib/form/Form";
-import { InputType } from "../model/data";
 
 type State = {
   active: boolean;
@@ -14,8 +13,6 @@ const formItemStyle = { marginBottom: "10px" };
 interface Props {
   fieldName: string;
   exclusive: boolean;
-  usecaseName: string;
-  recordInputType: Record<string, InputType>;
 }
 
 const InputOption = (props: Props) => {
@@ -51,10 +48,6 @@ const InputOption = (props: Props) => {
     console.log(value.states.filter((x) => x.active)?.map((x) => x.value));
   };
 
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-
   return (
     <Form
       form={form}
@@ -62,12 +55,11 @@ const InputOption = (props: Props) => {
       onFinish={onFinish}
       autoComplete="off"
       layout="vertical"
-      // style={{ border: "1px solid", borderColor: "#dedede", margin: "10px", marginBottom: "0px", padding: "5px", paddingTop: "10px", borderRadius: "5px" }}
-      style={{ background: colorBgContainer, padding: "20px" }}
+      style={{ border: "1px solid", borderColor: "#dedede", margin: "10px", marginBottom: "0px", padding: "5px", paddingTop: "10px", borderRadius: "5px" }}
     >
       <Form.Item
         label="Hello"
-        // style={{ padding: "0px 10px" }}
+        style={{ padding: "0px 10px" }}
       >
         <Form.List
           name="states"
@@ -87,7 +79,7 @@ const InputOption = (props: Props) => {
                   style={{ display: "flex" }}
                   direction="vertical"
                 >
-                  <Row gutter={20}>
+                  <Row gutter={[8, 8]}>
                     <Col>
                       <Form.Item
                         style={formItemStyle}
