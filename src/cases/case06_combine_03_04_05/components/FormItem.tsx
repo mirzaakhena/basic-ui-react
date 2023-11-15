@@ -11,8 +11,6 @@ const FormItem = (props: Props) => {
   //
   const lastFieldName = props.fieldNames[props.fieldNames.length - 1];
 
-  console.log(props.fieldNames);
-
   return (
     <Form.Item
       key={lastFieldName}

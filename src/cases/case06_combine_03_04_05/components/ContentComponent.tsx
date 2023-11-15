@@ -108,7 +108,7 @@ function generateRequestTabItems(httpData: HTTPData) {
       key: "param",
       children: (
         <InputOption
-          exclusive={true}
+          exclusive={true} //path param by default exclusive=true
           fieldName="states"
           recordInputType={httpData.param}
           usecaseName={httpData.usecase}
@@ -123,7 +123,7 @@ function generateRequestTabItems(httpData: HTTPData) {
       key: "query",
       children: (
         <InputOption
-          exclusive={false}
+          exclusive={false} // query variable by default exclusive=true, tapi jika nerima dalam bentuk array, maka exclusive=false
           fieldName="states"
           recordInputType={httpData.query}
           usecaseName={httpData.usecase}

@@ -1,11 +1,10 @@
 import { FileOutlined } from "@ant-design/icons";
-import { Layout, Menu, MenuProps, theme } from "antd";
+import { Layout, Menu, MenuProps } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content, Footer } from "antd/es/layout/layout";
 import React from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
 import { Tags } from "../model/http_data";
-import InputOptions from "./InputOptions";
 import ContentComponent from "./ContentComponent";
 
 type MenuItem = Required<MenuProps>["items"][number];

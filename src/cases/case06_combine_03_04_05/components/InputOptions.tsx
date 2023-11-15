@@ -58,7 +58,6 @@ const InputOption = (props: Props) => {
   return (
     <Form
       form={form}
-      name="dynamic_form_nest_item"
       onFinish={onFinish}
       autoComplete="off"
       layout="vertical"
