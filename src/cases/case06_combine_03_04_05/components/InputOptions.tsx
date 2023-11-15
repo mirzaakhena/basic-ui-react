@@ -1,74 +1,74 @@
-import { CloseOutlined, MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Radio, RadioChangeEvent, Row, Space, Switch } from "antd";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Col, Form, Input, Row, Space, Switch } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useState } from "react";
 
-interface ARowProps {
-  selectedRow: string;
-}
+// interface ARowProps {
+//   selectedRow: string;
+// }
 
-const ARow = (props: ARowProps) => {
-  return (
-    <Row gutter={[8, 8]}>
-      <Col>
-        <Radio
-          style={{ paddingTop: "5px" }}
-          value={props.selectedRow}
-        />
-      </Col>
-      <Col>
-        <Input placeholder="Description" />
-      </Col>
-      <Col flex="auto">
-        <Input.TextArea
-          name="value"
-          rows={1}
-          placeholder="Value"
-        />
-      </Col>
-      <Col>
-        <CloseOutlined style={{ paddingTop: "10px" }} />
-      </Col>
-    </Row>
-  );
-};
+// const ARow = (props: ARowProps) => {
+//   return (
+//     <Row gutter={[8, 8]}>
+//       <Col>
+//         <Radio
+//           style={{ paddingTop: "5px" }}
+//           value={props.selectedRow}
+//         />
+//       </Col>
+//       <Col>
+//         <Input placeholder="Description" />
+//       </Col>
+//       <Col flex="auto">
+//         <Input.TextArea
+//           name="value"
+//           rows={1}
+//           placeholder="Value"
+//         />
+//       </Col>
+//       <Col>
+//         <CloseOutlined style={{ paddingTop: "10px" }} />
+//       </Col>
+//     </Row>
+//   );
+// };
 
-const InputOptions2 = () => {
-  //
+// const InputOptions2 = () => {
+//   //
 
-  return (
-    <>
-      <div>
-        <Form layout="vertical">
-          <Form.Item label="Hello">
-            <Radio.Group style={{ width: "100%" }}>
-              <Space.Compact
-                block
-                direction="vertical"
-              >
-                <Space direction="vertical">
-                  <ARow selectedRow="A" />
-                  <ARow selectedRow="B" />
-                  <ARow selectedRow="C" />
-                  <Row gutter={[8, 8]}>
-                    <Col style={{ paddingLeft: "36px", width: "240px" }}>
-                      <Button
-                        block
-                        type="dashed"
-                      >
-                        + Add
-                      </Button>
-                    </Col>
-                  </Row>
-                </Space>
-              </Space.Compact>
-            </Radio.Group>
-          </Form.Item>
-        </Form>
-      </div>
-    </>
-  );
-};
+//   return (
+//     <>
+//       <div>
+//         <Form layout="vertical">
+//           <Form.Item label="Hello">
+//             <Radio.Group style={{ width: "100%" }}>
+//               <Space.Compact
+//                 block
+//                 direction="vertical"
+//               >
+//                 <Space direction="vertical">
+//                   <ARow selectedRow="A" />
+//                   <ARow selectedRow="B" />
+//                   <ARow selectedRow="C" />
+//                   <Row gutter={[8, 8]}>
+//                     <Col style={{ paddingLeft: "36px", width: "240px" }}>
+//                       <Button
+//                         block
+//                         type="dashed"
+//                       >
+//                         + Add
+//                       </Button>
+//                     </Col>
+//                   </Row>
+//                 </Space>
+//               </Space.Compact>
+//             </Radio.Group>
+//           </Form.Item>
+//         </Form>
+//       </div>
+//     </>
+//   );
+// };
 
 type MyRow = {
   active: boolean;
@@ -194,7 +194,7 @@ const InputOptions = () => {
           type="primary"
           htmlType="submit"
         >
-          Submit
+          Submitsss
         </Button>
       </Form.Item>
 
