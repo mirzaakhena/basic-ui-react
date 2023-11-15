@@ -1,4 +1,4 @@
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { MinusCircleOutlined, PlusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, Row, Space, Switch } from "antd";
 import { useForm } from "antd/lib/form/Form";
 
@@ -10,28 +10,46 @@ type State = {
 
 const formItemStyle = { marginBottom: "10px" };
 
+const exclusive = false;
+
 const Page = () => {
   //
 
   const [form] = useForm<{ states: State[] }>();
 
   const handleSwitchChange = (i: number) => {
+    //
+
+    if (!exclusive) {
+      return;
+    }
+
     const states = form.getFieldValue("states") as State[];
 
     if (states) {
       const updatedStates = [...states];
 
-      updatedStates[i].active = true;
-      updatedStates.filter((_, index) => index !== i).forEach((x) => (x.active = false));
+      if (!updatedStates[i].active) {
+        updatedStates[i].active = false;
+      } else {
+        updatedStates[i].active = true;
+        updatedStates.filter((_, index) => index !== i).forEach((x) => (x.active = false));
+      }
+
       form.setFieldValue("states", updatedStates);
     }
+  };
+
+  const onFinish = (value: { states: State[] }) => {
+    //
+    console.log(value.states.filter((x) => x.active)?.map((x) => x.value));
   };
 
   return (
     <Form
       form={form}
       name="dynamic_form_nest_item"
-      onFinish={console.log}
+      onFinish={onFinish}
       autoComplete="off"
       layout="vertical"
     >
@@ -65,18 +83,25 @@ const Page = () => {
                         name={[name, "active"]}
                         valuePropName="checked"
                       >
-                        <Switch onChange={() => handleSwitchChange(index)} />
+                        <Switch
+                          onChange={() => handleSwitchChange(index)}
+                          checkedChildren="active"
+                          unCheckedChildren="ignored"
+                        />
                       </Form.Item>
                     </Col>
-                    <Col>
-                      <Form.Item
-                        style={formItemStyle}
-                        {...restField}
-                        name={[name, "description"]}
-                      >
-                        <Input placeholder="description" />
-                      </Form.Item>
-                    </Col>
+                    {fields.length > 1 ? (
+                      <Col>
+                        <Form.Item
+                          style={formItemStyle}
+                          {...restField}
+                          name={[name, "description"]}
+                        >
+                          <Input placeholder="description (optional)" />
+                        </Form.Item>
+                      </Col>
+                    ) : undefined}
+
                     <Col flex="auto">
                       <Form.Item
                         style={formItemStyle}
@@ -89,24 +114,36 @@ const Page = () => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col>
-                      <Form.Item style={formItemStyle}>
-                        <MinusCircleOutlined onClick={() => remove(name)} />
-                      </Form.Item>
-                    </Col>
+                    {fields.length > 1 ? (
+                      <Col>
+                        <Form.Item style={formItemStyle}>
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </Form.Item>
+                      </Col>
+                    ) : (
+                      <Col>
+                        <Form.Item style={formItemStyle}>
+                          <PlusCircleOutlined onClick={() => add({ active: fields.length === 0 ? true : false, description: "", value: "" })} />
+                        </Form.Item>
+                      </Col>
+                    )}
                   </Row>
                 </Space>
               ))}
-              <Form.Item>
+
+              {fields.length > 1 ? (
                 <Button
+                  style={{ marginBottom: "10px" }}
                   type="dashed"
-                  onClick={() => add({ active: false, description: "", value: "" })}
+                  onClick={() => {
+                    add({ active: fields.length === 0 ? true : false, description: "", value: "" });
+                  }}
                   block
-                  icon={<PlusOutlined />}
+                  icon={<PlusCircleOutlined />}
                 >
                   Add new alternative variable
                 </Button>
-              </Form.Item>
+              ) : undefined}
             </>
           )}
         </Form.List>
