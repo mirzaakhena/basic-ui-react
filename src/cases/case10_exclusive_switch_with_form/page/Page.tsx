@@ -1,4 +1,4 @@
-import { MinusCircleOutlined, PlusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, Row, Space, Switch } from "antd";
 import { useForm } from "antd/lib/form/Form";
 
@@ -10,9 +10,12 @@ type State = {
 
 const formItemStyle = { marginBottom: "10px" };
 
-const exclusive = false;
+interface Props {
+  fieldName: string;
+  exclusive: boolean;
+}
 
-const Page = () => {
+const Page = (props: Props) => {
   //
 
   const [form] = useForm<{ states: State[] }>();
@@ -20,7 +23,7 @@ const Page = () => {
   const handleSwitchChange = (i: number) => {
     //
 
-    if (!exclusive) {
+    if (!props.exclusive) {
       return;
     }
 
@@ -52,6 +55,7 @@ const Page = () => {
       onFinish={onFinish}
       autoComplete="off"
       layout="vertical"
+      style={{ border: "1px solid", borderColor: "#dedede", margin: "10px", marginBottom: "0px", padding: "5px", paddingTop: "10px", borderRadius: "5px" }}
     >
       <Form.Item
         label="Hello"
@@ -66,7 +70,6 @@ const Page = () => {
             // { active: true, description: "c", value: "C" },
             // { active: true, description: "d", value: "D" },
           ]}
-          // rules={rules}
         >
           {(fields, { add, remove }) => (
             <>
@@ -133,7 +136,6 @@ const Page = () => {
 
               {fields.length > 1 ? (
                 <Button
-                  style={{ marginBottom: "10px" }}
                   type="dashed"
                   onClick={() => {
                     add({ active: fields.length === 0 ? true : false, description: "", value: "" });
@@ -147,14 +149,14 @@ const Page = () => {
             </>
           )}
         </Form.List>
-        <Form.Item>
+        {/* <Form.Item>
           <Button
             type="primary"
             htmlType="submit"
           >
             Submit
           </Button>
-        </Form.Item>
+        </Form.Item> */}
       </Form.Item>
     </Form>
   );
