@@ -26,6 +26,12 @@ const Page = () => {
                       type: "number",
                       default: 10,
                     },
+                    ids: {
+                      type: "array",
+                      items: {
+                        type: "string",
+                      },
+                    },
                   },
                   param: {
                     userId: {

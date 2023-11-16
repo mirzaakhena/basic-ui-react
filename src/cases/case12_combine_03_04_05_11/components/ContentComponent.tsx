@@ -108,10 +108,10 @@ function generateRequestTabItems(httpData: HTTPData) {
       key: "param",
       children: (
         <InputOption
-          exclusive={true} //path param by default exclusive=true
-          fieldName="states"
           recordInputType={httpData.param}
-          usecaseName={httpData.usecase}
+          // exclusive={true} //path param by default exclusive=true
+          // fieldName="states"
+          // usecaseName={httpData.usecase}
         />
       ),
     });
@@ -123,10 +123,10 @@ function generateRequestTabItems(httpData: HTTPData) {
       key: "query",
       children: (
         <InputOption
-          exclusive={false} // query variable by default exclusive=true, tapi jika nerima dalam bentuk array, maka exclusive=false
-          fieldName="states"
           recordInputType={httpData.query}
-          usecaseName={httpData.usecase}
+          // exclusive={false} // query variable by default exclusive=true, tapi jika nerima dalam bentuk array, maka exclusive=false
+          // fieldName="states"
+          // usecaseName={httpData.usecase}
         />
       ),
     });
@@ -138,10 +138,10 @@ function generateRequestTabItems(httpData: HTTPData) {
       key: "header",
       children: (
         <InputOption
-          exclusive={true}
-          fieldName="states"
           recordInputType={httpData.header}
-          usecaseName={httpData.usecase}
+          // exclusive={true}
+          // fieldName="states"
+          // usecaseName={httpData.usecase}
         />
       ),
     });

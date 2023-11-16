@@ -1,5 +1,5 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row, Space, Switch, theme } from "antd";
+import { Button, Col, Divider, Form, FormInstance, Input, Row, Space, Switch, theme } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { InputType } from "../model/data";
 
@@ -9,46 +9,27 @@ type State = {
   value?: string;
 };
 
+type RecordStates = Record<string, State[]>;
+
 const formItemStyle = { marginBottom: "10px" };
 
 interface Props {
-  fieldName: string;
-  exclusive: boolean;
-  usecaseName: string;
   recordInputType: Record<string, InputType>;
 }
 
 const InputOption = (props: Props) => {
   //
 
-  const [form] = useForm<{ states: State[] }>();
+  const [form] = useForm<RecordStates>();
 
-  const handleSwitchChange = (i: number) => {
+  const onFinish = (value: RecordStates) => {
     //
-
-    if (!props.exclusive) {
-      return;
-    }
-
-    const states = form.getFieldValue("states") as State[];
-
-    if (states) {
-      const updatedStates = [...states];
-
-      if (!updatedStates[i].active) {
-        updatedStates[i].active = false;
-      } else {
-        updatedStates[i].active = true;
-        updatedStates.filter((_, index) => index !== i).forEach((x) => (x.active = false));
-      }
-
-      form.setFieldValue("states", updatedStates);
-    }
-  };
-
-  const onFinish = (value: { states: State[] }) => {
-    //
-    console.log(value.states.filter((x) => x.active)?.map((x) => x.value));
+    Object.keys(value).forEach((key) => {
+      console.log(
+        key,
+        value[key].filter((x) => x.active)?.map((x) => x.value)
+      );
+    });
   };
 
   const {
@@ -61,22 +42,73 @@ const InputOption = (props: Props) => {
       onFinish={onFinish}
       autoComplete="off"
       layout="vertical"
-      // style={{ border: "1px solid", borderColor: "#dedede", margin: "10px", marginBottom: "0px", padding: "5px", paddingTop: "10px", borderRadius: "5px" }}
       style={{ background: colorBgContainer, padding: "20px" }}
     >
+      {generateItem(props.recordInputType, form)}
+
+      <Form.Item>
+        <Button
+          type="primary"
+          htmlType="submit"
+        >
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+
+export default InputOption;
+
+function generateItem(recordInputType: Record<string, InputType>, form: FormInstance) {
+  //
+
+  const handleSwitchChange = (i: number, stateName: string, exclusive: boolean, form: FormInstance) => {
+    //
+
+    if (!exclusive) {
+      return;
+    }
+
+    const states = form.getFieldValue(stateName) as State[];
+
+    if (states) {
+      const updatedStates = [...states];
+
+      if (!updatedStates[i].active) {
+        updatedStates[i].active = false;
+      } else {
+        updatedStates[i].active = true;
+        updatedStates.filter((_, index) => index !== i).forEach((x) => (x.active = false));
+      }
+
+      form.setFieldValue(stateName, updatedStates);
+    }
+  };
+
+  const formItems: React.ReactNode[] = [];
+
+  for (const fieldName in recordInputType) {
+    //
+
+    const field = recordInputType[fieldName];
+
+    const exclusive = field.type !== "array";
+
+    formItems.push(
       <Form.Item
-        label="Hello"
-        // style={{ padding: "0px 10px" }}
+        key={fieldName}
+        style={{ marginBottom: "50px" }}
       >
+        <Divider
+          orientation="left"
+          orientationMargin="0"
+        >
+          {fieldName}
+        </Divider>
         <Form.List
-          name="states"
-          initialValue={[
-            //
-            { active: true, description: "a", value: "A" },
-            // { active: true, description: "b", value: "B" },
-            // { active: true, description: "c", value: "C" },
-            // { active: true, description: "d", value: "D" },
-          ]}
+          name={fieldName}
+          initialValue={[{ active: true, description: "", value: "" }]}
         >
           {(fields, { add, remove }) => (
             <>
@@ -94,7 +126,7 @@ const InputOption = (props: Props) => {
                         valuePropName="checked"
                       >
                         <Switch
-                          onChange={() => handleSwitchChange(index)}
+                          onChange={() => handleSwitchChange(index, fieldName, exclusive, form)}
                           checkedChildren="active"
                           unCheckedChildren="ignored"
                         />
@@ -156,17 +188,9 @@ const InputOption = (props: Props) => {
             </>
           )}
         </Form.List>
-        {/* <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-          >
-            Submit
-          </Button>
-        </Form.Item> */}
       </Form.Item>
-    </Form>
-  );
-};
+    );
+  }
 
-export default InputOption;
+  return formItems;
+}
