@@ -6,7 +6,7 @@ import { createDebounce } from "../util/debounce";
 import { useEffect, useState } from "react";
 import { pascalToCamel } from "../util/convert";
 
-type State = {
+export type State = {
   active: boolean;
   description?: string;
   value?: string;
@@ -16,10 +16,13 @@ type State = {
 
 const formItemStyle = { marginBottom: "10px" };
 
+export type AttributeParamType = "body" | "param" | "query" | "header" | "cookie";
+
 interface Props {
   recordInputType: Record<string, InputType>;
   usecaseName: string;
-  attributeParamType: "body" | "param" | "query" | "header" | "cookie";
+  attributeParamType: AttributeParamType;
+  onUpdated: (param: Record<string, string>, query: string) => void;
 }
 
 const InputOption = (props: Props) => {
@@ -49,6 +52,46 @@ const InputOption = (props: Props) => {
 
       let data = JSON.stringify(newValue);
       localStorage.setItem(`${props.usecaseName}`, data);
+
+      if (props.attributeParamType !== "param" && props.attributeParamType !== "query") {
+        return;
+      }
+
+      let param = {};
+      {
+        const x = newValue[props.usecaseName]["param"];
+        if (x) {
+          for (const key in x) {
+            const states = x[key] as State[];
+            states
+              .filter((state) => state.active)
+              .forEach((z) => {
+                if (z.value) {
+                  param = { ...param, [key]: z.value };
+                }
+              });
+          }
+        }
+      }
+
+      let query = "";
+      {
+        const x = newValue[props.usecaseName]["query"];
+        if (x) {
+          for (const key in x) {
+            const states = x[key] as State[];
+            states
+              .filter((state) => state.active)
+              .forEach((z) => {
+                if (z.value) {
+                  query = `${query}&${key}=${z.value}`;
+                }
+              });
+          }
+        }
+      }
+      query = `?${query.slice(1)}`;
+      props.onUpdated(param, query);
     }
   });
 
@@ -59,7 +102,11 @@ const InputOption = (props: Props) => {
     setInitialized(true);
   }, [form]);
 
-  setTimeout(() => initialized && resetFieldValues(), 50);
+  setTimeout(() => {
+    if (initialized) {
+      resetFieldValues();
+    }
+  }, 50);
 
   // const onFinish = (value: RecordStates) => {
   //   //
@@ -91,15 +138,14 @@ const InputOption = (props: Props) => {
       style={{ background: colorBgContainer, padding: "20px" }}
     >
       {generateItem(props.recordInputType, [pascalToCamel(props.usecaseName), props.attributeParamType], form, onChange)}
-
-      <Form.Item>
+      {/* <Form.Item>
         <Button
           type="primary"
           htmlType="submit"
         >
           Submit
         </Button>
-      </Form.Item>
+      </Form.Item> */}
     </Form>
   );
 };

@@ -15,7 +15,7 @@ const Page = () => {
                 {
                   usecase: "userCreate",
                   method: "post",
-                  path: "/user/create",
+                  path: "/user/{userId}/create",
                   tag: "user",
                   query: {
                     page: {

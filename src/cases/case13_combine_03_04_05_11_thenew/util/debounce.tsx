@@ -1,4 +1,4 @@
-export function createDebounce<T extends (...args: any[]) => any>(this: any, fn: T, wait: number = 2000): (...args: Parameters<T>) => void {
+export function createDebounce<T extends (...args: any[]) => any>(this: any, fn: T, wait: number = 600): (...args: Parameters<T>) => void {
   let timer: ReturnType<typeof setTimeout>;
   return (...args: Parameters<T>) => {
     if (timer) {
