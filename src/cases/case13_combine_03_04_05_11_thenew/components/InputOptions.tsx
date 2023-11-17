@@ -157,7 +157,7 @@ function generateItem(recordInputType: Record<string, InputType>, previousField:
         <Form.List name={[...previousField, fieldName]}>
           {(fields, { add, remove }) => (
             <>
-              {fields.map(({ key, name, ...restField }, index) => (
+              {fields.map(({ key, name }, index) => (
                 <Space
                   key={key}
                   style={{ display: "flex" }}

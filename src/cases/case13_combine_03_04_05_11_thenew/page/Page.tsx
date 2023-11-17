@@ -53,6 +53,7 @@ const Page = () => {
                     },
                     punyaKucing: {
                       type: "boolean",
+                      default: false,
                     },
                     hobby123: {
                       type: "array",

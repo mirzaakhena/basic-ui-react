@@ -159,11 +159,11 @@ const generateInitialValue = (recordInputType: Record<string, InputType>, jsonOb
     const field = recordInputType[fieldName];
 
     if (field.type === "array") {
-      defaultValueObject[fieldName] = jsonObj ? jsonObj[fieldName] : field.items.default ?? undefined;
+      defaultValueObject[fieldName] = jsonObj ? (jsonObj[fieldName] ? jsonObj[fieldName] : field.items.default ?? undefined) : field.items.default ?? undefined;
 
       //
     } else if (field.type === "object") {
-      defaultValueObject[fieldName] = jsonObj ? generateInitialValue(field.properties, jsonObj[fieldName]) : undefined;
+      defaultValueObject[fieldName] = jsonObj ? (jsonObj[fieldName] ? generateInitialValue(field.properties, jsonObj[fieldName]) : undefined) : undefined;
 
       //
     } else if (field.type === "date") {
@@ -177,7 +177,7 @@ const generateInitialValue = (recordInputType: Record<string, InputType>, jsonOb
 
       //
     } else {
-      defaultValueObject[fieldName] = jsonObj ? jsonObj[fieldName] : field.default ?? undefined;
+      defaultValueObject[fieldName] = jsonObj ? (jsonObj[fieldName] ? jsonObj[fieldName] : field.default ?? undefined) : field.default ?? undefined;
 
       //
     }
