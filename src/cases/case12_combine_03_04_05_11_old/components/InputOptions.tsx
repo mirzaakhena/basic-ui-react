@@ -15,6 +15,8 @@ const formItemStyle = { marginBottom: "10px" };
 
 interface Props {
   recordInputType: Record<string, InputType>;
+  // usecaseName: string;
+  // attributeParamType: string;
 }
 
 const InputOption = (props: Props) => {
@@ -22,14 +24,43 @@ const InputOption = (props: Props) => {
 
   const [form] = useForm<RecordStates>();
 
-  const onFinish = (value: RecordStates) => {
+  // const onChange = createDebounce(() => {
+  //   const value = form.getFieldsValue();
+  //   if (value) {
+  //     const data = JSON.stringify(value);
+  //     localStorage.setItem(`${props.usecaseName}_${props.attributeParamType}`, data);
+  //   }
+  // });
+
+  // const resetFieldValues = () => {
+  //   const savedState = localStorage.getItem(`${props.usecaseName}_${props.attributeParamType}`);
+  //   const jsonObj = savedState ? JSON.parse(savedState)[props.usecaseName] : null;
+  //   const data = generateInitialValue(props.recordInputType, jsonObj);
+  //   form.setFieldsValue({ [props.usecaseName]: { ...data } });
+  // };
+
+  // const [initialized, setInitialized] = useState(false);
+
+  // useEffect(() => {
+  //   resetFieldValues();
+  //   setInitialized(true);
+  // }, [form]);
+
+  // setTimeout(() => initialized && resetFieldValues(), 50);
+
+  // const onFinish = (value: RecordStates) => {
+  //   //
+  //   Object.keys(value).forEach((key) => {
+  //     console.log(
+  //       key,
+  //       value[key].filter((x) => x.active)?.map((x) => x.value)
+  //     );
+  //   });
+  // };
+
+  const onFinish = (_: any) => {
     //
-    Object.keys(value).forEach((key) => {
-      console.log(
-        key,
-        value[key].filter((x) => x.active)?.map((x) => x.value)
-      );
-    });
+    console.log(form.getFieldsValue());
   };
 
   const {
@@ -39,6 +70,8 @@ const InputOption = (props: Props) => {
   return (
     <Form
       form={form}
+      // onFinish={onFinish}
+      // onFinish={console.log}
       onFinish={onFinish}
       autoComplete="off"
       layout="vertical"
@@ -132,17 +165,16 @@ function generateItem(recordInputType: Record<string, InputType>, form: FormInst
                         />
                       </Form.Item>
                     </Col>
-                    {fields.length > 1 ? (
-                      <Col>
-                        <Form.Item
-                          style={formItemStyle}
-                          {...restField}
-                          name={[name, "description"]}
-                        >
-                          <Input placeholder="description (optional)" />
-                        </Form.Item>
-                      </Col>
-                    ) : undefined}
+
+                    <Col>
+                      <Form.Item
+                        style={formItemStyle}
+                        {...restField}
+                        name={[name, "description"]}
+                      >
+                        {fields.length > 1 ? <Input placeholder="description (optional)" /> : <></>}
+                      </Form.Item>
+                    </Col>
 
                     <Col flex="auto">
                       <Form.Item
@@ -156,19 +188,16 @@ function generateItem(recordInputType: Record<string, InputType>, form: FormInst
                         />
                       </Form.Item>
                     </Col>
-                    {fields.length > 1 ? (
-                      <Col>
-                        <Form.Item style={formItemStyle}>
+
+                    <Col>
+                      <Form.Item style={formItemStyle}>
+                        {fields.length > 1 ? (
                           <MinusCircleOutlined onClick={() => remove(name)} />
-                        </Form.Item>
-                      </Col>
-                    ) : (
-                      <Col>
-                        <Form.Item style={formItemStyle}>
+                        ) : (
                           <PlusCircleOutlined onClick={() => add({ active: fields.length === 0 ? true : false, description: "", value: "" })} />
-                        </Form.Item>
-                      </Col>
-                    )}
+                        )}
+                      </Form.Item>
+                    </Col>
                   </Row>
                 </Space>
               ))}
@@ -194,3 +223,27 @@ function generateItem(recordInputType: Record<string, InputType>, form: FormInst
 
   return formItems;
 }
+
+// const generateInitialValue = (recordInputType: Record<string, InputType>, jsonObj: any) => {
+//   //
+
+//   const defaultValueObject: Record<string, any> = {};
+
+//   for (const fieldName in recordInputType) {
+//     //
+
+//     const field = recordInputType[fieldName];
+
+//     if (field.type === "array") {
+//       defaultValueObject[fieldName] = jsonObj ? jsonObj[fieldName] : field.items.default ?? undefined;
+
+//       //
+//     } else {
+//       defaultValueObject[fieldName] = jsonObj ? jsonObj[fieldName] : field.default ?? undefined;
+
+//       //
+//     }
+//   }
+
+//   return defaultValueObject;
+// };

@@ -11,14 +11,9 @@ import { createDebounce } from "../util/debounce";
 import { generateForm } from "./DynamicFormItem";
 
 interface Props {
-  // tag: string;
-  // usecase: string;
-  // fields: string[];
-  // httpData_: HTTPData;
   attributeParamType: "body" | "param" | "query" | "header" | "cookie";
   usecaseName: string;
   recordInputType: Record<string, InputType>;
-  // onSubmit: (submittedData: any) => void;
 }
 
 const TableAndFormComponent = (props: Props) => {
@@ -76,12 +71,12 @@ const TableAndFormComponent = (props: Props) => {
     const value = form.getFieldsValue();
     if (value) {
       const data = JSON.stringify(value);
-      localStorage.setItem(`${props.attributeParamType}_${props.usecaseName}`, data);
+      localStorage.setItem(`${props.usecaseName}_${props.attributeParamType}`, data);
     }
   });
 
   const resetFieldValues = () => {
-    const savedState = localStorage.getItem(`${props.attributeParamType}_${props.usecaseName}`);
+    const savedState = localStorage.getItem(`${props.usecaseName}_${props.attributeParamType}`);
     const jsonObj = savedState ? JSON.parse(savedState)[props.usecaseName] : null;
     const data = generateInitialValue(props.recordInputType, jsonObj);
     form.setFieldsValue({ [props.usecaseName]: { ...data } });
@@ -100,13 +95,19 @@ const TableAndFormComponent = (props: Props) => {
     token: { colorBgContainer },
   } = theme.useToken();
 
+  const onFinish = (_: any) => {
+    //
+    console.log(form.getFieldsValue());
+  };
+
   return (
     <>
       <Form
         style={{ background: colorBgContainer, padding: "20px" }}
         form={form}
         onChange={onChange}
-        onFinish={(x) => console.log(x)}
+        // onFinish={console.log}
+        onFinish={onFinish}
         layout="vertical"
       >
         <div
@@ -119,10 +120,15 @@ const TableAndFormComponent = (props: Props) => {
         >
           {generateForm(props.recordInputType, [pascalToCamel(props.usecaseName)], onChange)}
         </div>
-        {/* 
+
         <Form.Item>
-          <Button htmlType="submit">Submit</Button>
-        </Form.Item> */}
+          <Button
+            type="primary"
+            htmlType="submit"
+          >
+            Submit
+          </Button>
+        </Form.Item>
       </Form>
     </>
   );
@@ -148,8 +154,16 @@ const generateInitialValue = (recordInputType: Record<string, InputType>, jsonOb
       defaultValueObject[fieldName] = jsonObj ? generateInitialValue(field.properties, jsonObj[fieldName]) : undefined;
 
       //
+      // } else if (field.type === "date") {
+      //   defaultValueObject[fieldName] = jsonObj ? dayjs.utc(jsonObj[fieldName] ?? field.default ?? undefined, dateTimeFormat) : undefined;
     } else if (field.type === "date") {
-      defaultValueObject[fieldName] = jsonObj ? dayjs.utc(jsonObj[fieldName] ?? field.default ?? undefined, dateTimeFormat) : undefined;
+      defaultValueObject[fieldName] = jsonObj
+        ? jsonObj[fieldName]
+          ? dayjs.utc(jsonObj[fieldName], dateTimeFormat)
+          : field.default
+          ? dayjs.utc(field.default, dateTimeFormat)
+          : undefined
+        : undefined;
 
       //
     } else {

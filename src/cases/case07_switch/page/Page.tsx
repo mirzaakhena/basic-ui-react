@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Switch, Button, Checkbox } from "antd";
+import { Button, Checkbox, Switch } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
+import { useState } from "react";
 
 const Page = () => {
   const [switchState, setSwitchState] = useState(true);

@@ -14,7 +14,8 @@ interface Props {
 const MirzaForm = (props: Props) => {
   //
 
-  const [myForm] = useForm<DataType>();
+  // const [myForm] = useForm<DataType>();
+  const [myForm] = useForm();
 
   useEffect(() => {
     if (props.defaultValue) {
@@ -28,10 +29,11 @@ const MirzaForm = (props: Props) => {
         <Col>
           <Form
             form={myForm}
-            onFinish={props.onSubmit}
+            // onFinish={props.onSubmit}
+            onFinish={console.log}
           >
             <Form.Item
-              label="Name"
+              label="Nameee"
               name="name"
               key="name"
             >

@@ -1,6 +1,6 @@
 //
 
-import { Form, Table, theme } from "antd";
+import { Button, Form, Table, theme } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -11,14 +11,9 @@ import { createDebounce } from "../util/debounce";
 import { generateForm } from "./DynamicFormItem";
 
 interface Props {
-  // tag: string;
-  // usecase: string;
-  // fields: string[];
-  // httpData_: HTTPData;
   attributeParamType: "body" | "param" | "query" | "header" | "cookie";
   usecaseName: string;
   recordInputType: Record<string, InputType>;
-  // onSubmit: (submittedData: any) => void;
 }
 
 const TableAndFormComponent = (props: Props) => {
@@ -72,19 +67,31 @@ const TableAndFormComponent = (props: Props) => {
 
   const [form] = useForm();
 
+  // insert to local storage
   const onChange = createDebounce(() => {
-    const value = form.getFieldsValue();
-    if (value) {
-      const data = JSON.stringify(value);
-      localStorage.setItem(`${props.attributeParamType}_${props.usecaseName}`, data);
+    const jsonA = form.getFieldsValue();
+    if (jsonA) {
+      const savedState = localStorage.getItem(`${props.usecaseName}`);
+      const jsonB = savedState ? JSON.parse(savedState)[props.usecaseName] : undefined;
+
+      const newValue = {
+        [props.usecaseName]: {
+          ...jsonB,
+          ...jsonA[props.usecaseName],
+        },
+      };
+
+      let data = JSON.stringify(newValue);
+      localStorage.setItem(`${props.usecaseName}`, data);
     }
   });
 
+  // insert to form field
   const resetFieldValues = () => {
-    const savedState = localStorage.getItem(`${props.attributeParamType}_${props.usecaseName}`);
-    const jsonObj = savedState ? JSON.parse(savedState)[props.usecaseName] : null;
+    const savedState = localStorage.getItem(`${props.usecaseName}`);
+    const jsonObj = savedState ? JSON.parse(savedState)[props.usecaseName][props.attributeParamType] : null;
     const data = generateInitialValue(props.recordInputType, jsonObj);
-    form.setFieldsValue({ [props.usecaseName]: { ...data } });
+    form.setFieldsValue({ [props.usecaseName]: { [props.attributeParamType]: data } });
   };
 
   const [initialized, setInitialized] = useState(false);
@@ -100,13 +107,19 @@ const TableAndFormComponent = (props: Props) => {
     token: { colorBgContainer },
   } = theme.useToken();
 
+  const onFinish = (value: any) => {
+    //
+    console.log("<<", value);
+  };
+
   return (
     <>
       <Form
         style={{ background: colorBgContainer, padding: "20px" }}
         form={form}
         onChange={onChange}
-        onFinish={(x) => console.log(x)}
+        // onFinish={console.log}
+        onFinish={onFinish}
         layout="vertical"
       >
         <div
@@ -117,12 +130,17 @@ const TableAndFormComponent = (props: Props) => {
             border: "none",
           }}
         >
-          {generateForm(props.recordInputType, [pascalToCamel(props.usecaseName)], onChange)}
+          {generateForm(props.recordInputType, [pascalToCamel(props.usecaseName), "body"], onChange)}
         </div>
-        {/* 
+
         <Form.Item>
-          <Button htmlType="submit">Submit</Button>
-        </Form.Item> */}
+          <Button
+            type="primary"
+            htmlType="submit"
+          >
+            Submit
+          </Button>
+        </Form.Item>
       </Form>
     </>
   );
@@ -149,7 +167,13 @@ const generateInitialValue = (recordInputType: Record<string, InputType>, jsonOb
 
       //
     } else if (field.type === "date") {
-      defaultValueObject[fieldName] = jsonObj ? dayjs.utc(jsonObj[fieldName] ?? field.default ?? undefined, dateTimeFormat) : undefined;
+      defaultValueObject[fieldName] = jsonObj
+        ? jsonObj[fieldName]
+          ? dayjs.utc(jsonObj[fieldName], dateTimeFormat)
+          : field.default
+          ? dayjs.utc(field.default, dateTimeFormat)
+          : undefined
+        : undefined;
 
       //
     } else {

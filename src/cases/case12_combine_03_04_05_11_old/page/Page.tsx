@@ -38,6 +38,11 @@ const Page = () => {
                       type: "string",
                     },
                   },
+                  header: {
+                    token: {
+                      type: "string",
+                    },
+                  },
                   body: {
                     nama: {
                       type: "string",
@@ -49,7 +54,7 @@ const Page = () => {
                     punyaKucing: {
                       type: "boolean",
                     },
-                    hobby: {
+                    hobby123: {
                       type: "array",
                       items: {
                         type: "enum",
@@ -95,7 +100,7 @@ const Page = () => {
                   path: "/product/create",
                   tag: "product",
                   body: {
-                    object: {
+                    object123: {
                       type: "object",
                       properties: {
                         nama: {
@@ -120,7 +125,7 @@ const Page = () => {
                     //     },
                     //   },
                     // },
-                    array: {
+                    array456: {
                       type: "array",
                       items: {
                         type: "object",
