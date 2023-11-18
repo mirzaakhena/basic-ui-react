@@ -1,11 +1,10 @@
 import { Button, Col, Form, Input, Layout, Row, Space, Tabs, theme } from "antd";
 import { Content } from "antd/es/layout/layout";
-import { HTTPData } from "../model/http_data";
-import TableAndFormComponent from "./TableAndFormComponent";
 import { Tab } from "rc-tabs/lib/interface";
-import InputOption, { AttributeParamType, State } from "./InputOptions";
 import { useEffect, useState } from "react";
-import { useForm } from "antd/es/form/Form";
+import { HTTPData } from "../model/http_data";
+import InputOption, { State } from "./InputOptions";
+import TableAndFormComponent from "./TableAndFormComponent";
 
 interface Props {
   httpData: HTTPData;
