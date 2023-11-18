@@ -28,6 +28,11 @@ const ContentComponent = (props: Props) => {
     background: colorBgContainer,
   };
 
+  const onChange = (key: string, tipe: string) => {
+    // console.log(tipe, key);
+    // TODO harus mengingat tab mana yg dibuka
+  };
+
   return (
     <>
       <Layout style={{ padding: "24px 24px 24px" }}>
@@ -37,13 +42,15 @@ const ContentComponent = (props: Props) => {
               tabBarStyle={tabBarStyle}
               type="card"
               items={generateRequestTabItems(props.httpData, props.onUpdated)}
+              onChange={(key) => onChange(key, "request")}
+              // defaultActiveKey={""}
             />
           </Col>
           <Col span={10}>
             <Tabs
               tabBarStyle={tabBarStyle}
               type="card"
-              items={["Response", "Header"].map((x, i) => {
+              items={["Response Body", "Response Header"].map((x, i) => {
                 const id = String(i + 1);
                 return {
                   label: x,
@@ -51,6 +58,8 @@ const ContentComponent = (props: Props) => {
                   children: <Content style={tabChildrenStyle}>Hello</Content>,
                 };
               })}
+              onChange={(key) => onChange(key, "response")}
+              // defaultActiveKey={""}
             />
           </Col>
         </Row>

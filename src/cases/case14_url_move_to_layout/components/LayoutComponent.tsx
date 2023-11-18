@@ -3,9 +3,9 @@ import { Button, Form, Input, Layout, Menu, MenuProps, Space, theme } from "antd
 import { useForm } from "antd/es/form/Form";
 import Sider from "antd/es/layout/Sider";
 import { Content, Footer } from "antd/es/layout/layout";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
-import { Methods, Tags } from "../model/http_data";
+import { Tags } from "../model/http_data";
 import ContentComponent from "./ContentComponent";
 import { State } from "./InputOptions";
 
@@ -49,22 +49,6 @@ const LayoutComponent = (props: Props) => {
     );
   });
 
-  // const [pathUrl, setPathUrl] = useState("");
-
-  // const currentHTTPData = useMemo(() => {
-  //   if (!keyPaths) {
-  //     return null;
-  //   }
-
-  //   const httpData = props.tags.find((tag) => tag.tag === keyPaths[1])?.httpDatas.find((data) => data.usecase === keyPaths[0]);
-
-  //   if (!httpData) {
-  //     return null;
-  //   }
-
-  //   return httpData;
-  // });
-
   const onUpdated = (param: Record<string, string>, query: string) => {
     //
 
@@ -78,19 +62,14 @@ const LayoutComponent = (props: Props) => {
       return;
     }
 
-    // setPathUrl(getURLWithParamAndQuery(httpData.path, param, query));
-
-    form.setFieldValue("pathUrl", getURLWithParamAndQuery(httpData.path, param, query));
-
-    // console.log("param update disini>>", param);
-    // console.log("query update disini>>", query);
+    form.setFieldValue("path", getURLWithParamAndQuery(httpData.path, param, query));
   };
 
   const routes = (
     <Routes>
       <Route
         path="/"
-        element={<>hello</>}
+        element={<></>}
       />
       {props.tags.map((usecaseData) => {
         const { httpDatas } = usecaseData;
@@ -143,16 +122,18 @@ const LayoutComponent = (props: Props) => {
       },
     };
 
-    const p = getParamValue(httpData.usecase, newValue);
-    const q = getQueryValue(httpData.usecase, newValue);
+    const p = getParamValue(newValue[httpData.usecase]["param"]);
+    const q = getQueryValue(newValue[httpData.usecase]["query"]);
     // setPathUrl(getURLWithParamAndQuery(httpData.path, p, q));
 
-    form.setFieldValue("pathUrl", getURLWithParamAndQuery(httpData.path, p, q));
+    form.setFieldValue("path", getURLWithParamAndQuery(httpData.path, p, q));
   };
 
-  const [method, setMethod] = useState<string>();
+  const [methodUrl, setMethodUrl] = useState<string>();
 
   const onClick: MenuProps["onClick"] = (e) => {
+    //
+
     setKeyPaths(e.keyPath);
 
     const httpData = props.tags.find((tag) => tag.tag === e.keyPath[1])?.httpDatas.find((data) => data.usecase === e.keyPath[0]);
@@ -161,12 +142,39 @@ const LayoutComponent = (props: Props) => {
       return;
     }
 
-    setMethod(httpData.method.toUpperCase());
+    setMethodUrl(httpData.method.toUpperCase());
   };
 
+  // TODO masih ada issue soal form
   useEffect(() => {
     updateURL();
   }, [keyPaths, form.getFieldsValue()]);
+
+  const onFinish = (data: string) => {
+    //
+
+    // TODO harusnya gak perlu looping lagi
+    if (!keyPaths) {
+      return;
+    }
+
+    const httpData = props.tags.find((tag) => tag.tag === keyPaths[1])?.httpDatas.find((data) => data.usecase === keyPaths[0]);
+
+    if (!httpData) {
+      return;
+    }
+
+    const savedState = localStorage.getItem(httpData.usecase);
+    if (savedState) {
+      const httpVariable = JSON.parse(savedState)[httpData.usecase];
+      const headerOptions = httpVariable["header"] as { [key: string]: State[] };
+      let header = {};
+      for (const key in headerOptions) {
+        header = { ...header, [key]: headerOptions[key].find((header) => header.active)?.value ?? undefined };
+      }
+      console.log({ method: methodUrl }, data, { body: httpVariable["body"] }, { header });
+    }
+  };
 
   return (
     <>
@@ -192,24 +200,9 @@ const LayoutComponent = (props: Props) => {
             // style={{ margin: "0 0px" }}
             style={{ margin: "0px 0px 0px 200px" }}
           >
-            {/* --------------------------------------- */}
-
-            {/* <Space direction="vertical">
-              <Content
-                style={{
-                  margin: "20px 20px 10px 20px",
-                  padding: "20px 20px 10px 20px",
-                  minHeight: 10,
-                  background: colorBgContainer,
-                }}
-              >
-                
-              </Content>
-            </Space> */}
-
             <Form
               form={form}
-              onFinish={console.log}
+              onFinish={onFinish}
               style={{
                 margin: "20px 20px 0px 20px",
                 padding: "20px 20px 1px 20px",
@@ -219,12 +212,11 @@ const LayoutComponent = (props: Props) => {
             >
               <Space.Compact block>
                 <Form.Item
-                  name="pathUrl"
+                  name="path"
                   style={{ width: "100%" }}
                 >
                   <Input
-                    addonBefore={method}
-                    // defaultValue={`http://localhost:3000${pathUrl}`}
+                    addonBefore={methodUrl}
                     // defaultValue={`http://localhost:3000`}
                     size="large"
                     readOnly
@@ -242,8 +234,6 @@ const LayoutComponent = (props: Props) => {
               </Space.Compact>
             </Form>
 
-            {/* --------------------------------------- */}
-
             {routes}
           </Content>
 
@@ -258,45 +248,35 @@ export default LayoutComponent;
 
 //
 
-export function getParamValue(usecaseName: string, newValue: { [x: string]: any }) {
+export function getParamValue(newValue: any) {
   //
 
   let param: Record<string, string> = {};
-  const x = newValue[usecaseName]["param"];
-  if (x) {
-    for (const key in x) {
-      const states = x[key] as State[];
-      states
-        .filter((state) => state.active)
-        .forEach((z) => {
-          if (z.value) {
-            param = { ...param, [key]: z.value };
-          }
-        });
-    }
+  for (const key in newValue) {
+    (newValue[key] as State[])
+      .filter((state) => state.active)
+      .forEach((z) => {
+        if (z.value) {
+          param = { ...param, [key]: z.value };
+        }
+      });
   }
 
   return param;
 }
 
-export function getQueryValue(usecaseName: string, newValue: { [x: string]: any }) {
+export function getQueryValue(newValue: any) {
   //
 
   let query: string = "";
-  {
-    const x = newValue[usecaseName]["query"];
-    if (x) {
-      for (const key in x) {
-        const states = x[key] as State[];
-        states
-          .filter((state) => state.active)
-          .forEach((z) => {
-            if (z.value) {
-              query = `${query}&${key}=${z.value}`;
-            }
-          });
-      }
-    }
+  for (const key in newValue) {
+    (newValue[key] as State[])
+      .filter((state) => state.active)
+      .forEach((z) => {
+        if (z.value) {
+          query = `${query}&${key}=${z.value}`;
+        }
+      });
   }
 
   return query ? `?${query.slice(1)}` : "";

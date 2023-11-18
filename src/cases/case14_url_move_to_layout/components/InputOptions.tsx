@@ -13,8 +13,6 @@ export type State = {
   value?: string;
 };
 
-// type RecordStates = Record<string, State[]>;
-
 const formItemStyle = { marginBottom: "10px" };
 
 export type AttributeParamType = "body" | "param" | "query" | "header" | "cookie";
@@ -60,41 +58,7 @@ const InputOption = (props: Props) => {
         return;
       }
 
-      // let param = {};
-      // {
-      //   const x = newValue[props.usecaseName]["param"];
-      //   if (x) {
-      //     for (const key in x) {
-      //       const states = x[key] as State[];
-      //       states
-      //         .filter((state) => state.active)
-      //         .forEach((z) => {
-      //           if (z.value) {
-      //             param = { ...param, [key]: z.value };
-      //           }
-      //         });
-      //     }
-      //   }
-      // }
-
-      // let query = "";
-      // {
-      //   const x = newValue[props.usecaseName]["query"];
-      //   if (x) {
-      //     for (const key in x) {
-      //       const states = x[key] as State[];
-      //       states
-      //         .filter((state) => state.active)
-      //         .forEach((z) => {
-      //           if (z.value) {
-      //             query = `${query}&${key}=${z.value}`;
-      //           }
-      //         });
-      //     }
-      //   }
-      // }
-      // const queryWithQuestionMark = `?${query.slice(1)}`;
-      props.onUpdated(getParamValue(props.usecaseName, newValue), getQueryValue(props.usecaseName, newValue));
+      props.onUpdated(getParamValue(newValue[props.usecaseName]["param"]), getQueryValue(newValue[props.usecaseName]["query"]));
     }
   });
 
@@ -111,21 +75,6 @@ const InputOption = (props: Props) => {
     }
   }, 50);
 
-  // const onFinish = (value: RecordStates) => {
-  //   //
-  //   Object.keys(value).forEach((key) => {
-  //     console.log(
-  //       key,
-  //       value[key].filter((x) => x.active)?.map((x) => x.value)
-  //     );
-  //   });
-  // };
-
-  // const onFinish = (value: any) => {
-  //   //
-  //   console.log(form.getFieldsValue());
-  // };
-
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -133,8 +82,6 @@ const InputOption = (props: Props) => {
   return (
     <Form
       form={form}
-      // onFinish={onFinish}
-      // onFinish={console.log}
       onChange={onChange}
       autoComplete="off"
       layout="vertical"
