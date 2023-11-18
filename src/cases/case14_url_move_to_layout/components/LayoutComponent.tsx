@@ -3,9 +3,9 @@ import { Button, Form, Input, Layout, Menu, MenuProps, Space, theme } from "antd
 import { useForm } from "antd/es/form/Form";
 import Sider from "antd/es/layout/Sider";
 import { Content, Footer } from "antd/es/layout/layout";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
-import { Tags } from "../model/http_data";
+import { Methods, Tags } from "../model/http_data";
 import ContentComponent from "./ContentComponent";
 import { State } from "./InputOptions";
 
@@ -50,6 +50,20 @@ const LayoutComponent = (props: Props) => {
   });
 
   // const [pathUrl, setPathUrl] = useState("");
+
+  // const currentHTTPData = useMemo(() => {
+  //   if (!keyPaths) {
+  //     return null;
+  //   }
+
+  //   const httpData = props.tags.find((tag) => tag.tag === keyPaths[1])?.httpDatas.find((data) => data.usecase === keyPaths[0]);
+
+  //   if (!httpData) {
+  //     return null;
+  //   }
+
+  //   return httpData;
+  // });
 
   const onUpdated = (param: Record<string, string>, query: string) => {
     //
@@ -136,8 +150,18 @@ const LayoutComponent = (props: Props) => {
     form.setFieldValue("pathUrl", getURLWithParamAndQuery(httpData.path, p, q));
   };
 
+  const [method, setMethod] = useState<string>();
+
   const onClick: MenuProps["onClick"] = (e) => {
     setKeyPaths(e.keyPath);
+
+    const httpData = props.tags.find((tag) => tag.tag === e.keyPath[1])?.httpDatas.find((data) => data.usecase === e.keyPath[0]);
+
+    if (!httpData) {
+      return;
+    }
+
+    setMethod(httpData.method.toUpperCase());
   };
 
   useEffect(() => {
@@ -185,6 +209,7 @@ const LayoutComponent = (props: Props) => {
 
             <Form
               form={form}
+              onFinish={console.log}
               style={{
                 margin: "20px 20px 0px 20px",
                 padding: "20px 20px 1px 20px",
@@ -198,7 +223,7 @@ const LayoutComponent = (props: Props) => {
                   style={{ width: "100%" }}
                 >
                   <Input
-                    addonBefore="POST"
+                    addonBefore={method}
                     // defaultValue={`http://localhost:3000${pathUrl}`}
                     // defaultValue={`http://localhost:3000`}
                     size="large"
@@ -207,6 +232,7 @@ const LayoutComponent = (props: Props) => {
                 </Form.Item>
                 <Form.Item>
                   <Button
+                    htmlType="submit"
                     type="primary"
                     size="large"
                   >
