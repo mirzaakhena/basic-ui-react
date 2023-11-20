@@ -175,11 +175,15 @@ const LayoutComponent = (props: Props) => {
     }
   };
 
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
     <>
       <Layout style={{ minHeight: "100vh" }}>
         <Sider
           collapsible
+          collapsed={collapsed}
+          onCollapse={(value) => setCollapsed(value)}
           style={{
             position: "fixed",
             height: "calc(100% - 0px)",
@@ -197,7 +201,7 @@ const LayoutComponent = (props: Props) => {
         <Layout>
           <Content
             // style={{ margin: "0 0px" }}
-            style={{ margin: "0px 0px 0px 200px" }}
+            style={collapsed ? { margin: "0px 0px 0px 80px" } : { margin: "0px 0px 0px 200px" }}
           >
             <Form
               form={form}

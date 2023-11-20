@@ -1,4 +1,4 @@
-import { Col, Layout, Row, Tabs, theme } from "antd";
+import { Col, Collapse, Layout, Row, Space, Table, Tabs, theme } from "antd";
 import { Tab } from "rc-tabs/lib/interface";
 import { HTTPData } from "../model/http_data";
 import InputOption from "./InputOptions";
@@ -14,7 +14,7 @@ const ContentComponent = (props: Props) => {
   //
 
   const {
-    token: { colorBgContainer },
+    token: { colorBgContainer, colorBorderSecondary },
   } = theme.useToken();
 
   const tabBarStyle = {
@@ -77,24 +77,102 @@ const ContentComponent = (props: Props) => {
   //   setDefaultActiveKey({ request, response });
   // }, 100);
 
+  if (props.httpData.usecase.toLowerCase().endsWith("getall")) {
+    const dataSource = [
+      {
+        key: "1",
+        name: "Mike",
+        age: 32,
+        address: "10 Downing Street",
+      },
+      {
+        key: "2",
+        name: "John",
+        age: 42,
+        address: "10 Downing Street",
+      },
+    ];
+
+    const columns = [
+      {
+        title: "Name",
+        dataIndex: "name",
+        key: "name",
+      },
+      {
+        title: "Age",
+        dataIndex: "age",
+        key: "age",
+      },
+      {
+        title: "Address",
+        dataIndex: "address",
+        key: "address",
+      },
+    ];
+
+    return (
+      <>
+        <Layout style={{ padding: "24px 24px 24px" }}>
+          <Space direction="vertical">
+            <Collapse
+              items={[
+                {
+                  key: "1",
+                  label: "Paging and Filter",
+                  children: (
+                    <Row gutter={20}>
+                      <Col span={11}>
+                        <Tabs
+                          tabBarStyle={tabBarStyle}
+                          type="card"
+                          items={generateRequestTabItems(props.httpData, props.onUpdated, colorBorderSecondary)}
+                          onChange={(key) => onChange(key, "request")}
+                          // activeKey={defaultRequestActiveKey}
+                        />
+                      </Col>
+                      <Col span={13}>
+                        <Tabs
+                          tabBarStyle={tabBarStyle}
+                          type="card"
+                          items={generateResponseTabItems(props.httpData, props.onUpdated, colorBorderSecondary)}
+                          onChange={(key) => onChange(key, "response")}
+                          // activeKey={defaultResponseActiveKey}
+                        />
+                      </Col>
+                    </Row>
+                  ),
+                },
+              ]}
+            />
+            <Table
+              dataSource={dataSource}
+              columns={columns}
+            />
+          </Space>
+        </Layout>
+      </>
+    );
+  }
+
   return (
     <>
       <Layout style={{ padding: "24px 24px 24px" }}>
         <Row gutter={20}>
-          <Col span={14}>
+          <Col span={15}>
             <Tabs
               tabBarStyle={tabBarStyle}
               type="card"
-              items={generateRequestTabItems(props.httpData, props.onUpdated)}
+              items={generateRequestTabItems(props.httpData, props.onUpdated, colorBorderSecondary)}
               onChange={(key) => onChange(key, "request")}
               // activeKey={defaultRequestActiveKey}
             />
           </Col>
-          <Col span={10}>
+          <Col span={9}>
             <Tabs
               tabBarStyle={tabBarStyle}
               type="card"
-              items={generateResponseTabItems(props.httpData, props.onUpdated)}
+              items={generateResponseTabItems(props.httpData, props.onUpdated, colorBorderSecondary)}
               onChange={(key) => onChange(key, "response")}
               // activeKey={defaultResponseActiveKey}
             />
@@ -107,35 +185,62 @@ const ContentComponent = (props: Props) => {
 
 export default ContentComponent;
 
-function generateResponseTabItems(httpData: HTTPData, onUpdated: (param: Record<string, string>, query: string) => void) {
+function generateResponseTabItems(httpData: HTTPData, onUpdated: (param: Record<string, string>, query: string) => void, colorBorderSecondary2: string) {
   //
 
+  const {
+    token: { colorBorderSecondary },
+  } = theme.useToken();
+
   let tabItems: Tab[] = [];
+
+  const borderStyle = {
+    border: "1px solid",
+    borderTop: "none",
+    borderLeftColor: colorBorderSecondary,
+    borderRightColor: colorBorderSecondary,
+    borderBottomColor: colorBorderSecondary,
+  };
 
   tabItems.push({
     label: "Response Body",
     key: "body",
+    style: borderStyle,
     children: <JSONViewComponent message="Body of result here" />,
   });
 
   tabItems.push({
     label: "Response Header",
     key: "header",
+    style: borderStyle,
     children: <JSONViewComponent message="Header of result here" />,
   });
 
   return tabItems;
 }
 
-function generateRequestTabItems(httpData: HTTPData, onUpdated: (param: Record<string, string>, query: string) => void) {
+function generateRequestTabItems(httpData: HTTPData, onUpdated: (param: Record<string, string>, query: string) => void, colorBorderSecondary2: string) {
   //
 
+  const {
+    token: { colorBorderSecondary },
+  } = theme.useToken();
+
   let tabItems: Tab[] = [];
+
+  const borderStyle = {
+    border: "1px solid",
+    borderTop: "none",
+    borderLeftColor: colorBorderSecondary,
+    borderRightColor: colorBorderSecondary,
+    borderBottomColor: colorBorderSecondary,
+  };
 
   if (httpData.body) {
     tabItems.push({
       label: "Request Body",
       key: "body",
+      style: borderStyle,
       children: (
         <TableAndFormComponent
           attributeParamType="body"
@@ -150,6 +255,7 @@ function generateRequestTabItems(httpData: HTTPData, onUpdated: (param: Record<s
     tabItems.push({
       label: "Path Parameter",
       key: "param",
+      style: borderStyle,
       children: (
         <InputOption
           attributeParamType="param"
@@ -165,6 +271,7 @@ function generateRequestTabItems(httpData: HTTPData, onUpdated: (param: Record<s
     tabItems.push({
       label: "Query Variable",
       key: "query",
+      style: borderStyle,
       children: (
         <InputOption
           attributeParamType="query"
@@ -180,6 +287,7 @@ function generateRequestTabItems(httpData: HTTPData, onUpdated: (param: Record<s
     tabItems.push({
       label: "Request Header",
       key: "header",
+      style: borderStyle,
       children: (
         <InputOption
           attributeParamType="header"
