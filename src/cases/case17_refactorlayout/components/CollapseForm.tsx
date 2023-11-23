@@ -1,6 +1,6 @@
 import { Collapse } from "antd";
 import { ReactNode } from "react";
-import { InputType } from "../model/data";
+import { InputType } from "../model/data_type";
 import { generateForm } from "./FormComponent";
 
 const CollapseForm: React.FC<{ json: Record<string, InputType>; previousField: (string | number)[]; onChange: () => void; extra?: ReactNode }> = ({

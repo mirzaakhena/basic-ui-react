@@ -1,5 +1,5 @@
 import { Input } from "antd";
-import { TextAreaType } from "../model/data";
+import { TextAreaType } from "../model/data_type";
 import FormItem, { FormItemProps } from "./FormItem";
 
 const FormItemTextArea = (props: FormItemProps<TextAreaType>) => {

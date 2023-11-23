@@ -1,6 +1,6 @@
 import { InputNumber } from "antd";
 import FormItem, { FormItemProps } from "./FormItem";
-import { NumberType } from "../model/data";
+import { NumberType } from "../model/data_type";
 
 const FormItemNumber = (props: FormItemProps<NumberType>) => {
   //

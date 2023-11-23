@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { HTTPData } from "../model/http_data";
+import { HTTPData } from "../model/data_http";
 
-import { ColumnType, FilterValue } from "antd/es/table/interface";
-import Table, { ColumnsType, TablePaginationConfig } from "antd/es/table";
-import { ArrayType, ObjectType } from "../model/data";
-import CopyToClipboard from "react-copy-to-clipboard";
-import { Modal, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import JsonView from "@uiw/react-json-view";
+import { Modal, message } from "antd";
+import Table, { ColumnsType } from "antd/es/table";
+import { ColumnType } from "antd/es/table/interface";
+import CopyToClipboard from "react-copy-to-clipboard";
+import { ArrayType, ObjectType } from "../model/data_type";
 
 type Item = {
   id: string;
@@ -19,10 +19,10 @@ interface Props {
   items: Item[];
 }
 
-interface TableParams {
-  pagination?: TablePaginationConfig;
-  filters?: Record<string, FilterValue>;
-}
+// interface TableParams {
+//   pagination?: TablePaginationConfig;
+//   filters?: Record<string, FilterValue>;
+// }
 
 const TableComponent = (props: Props) => {
   //
@@ -37,9 +37,9 @@ const TableComponent = (props: Props) => {
   //   },
   // ]);
 
-  const [tableParams, setTableParams] = useState<TableParams>({
-    pagination: { current: 1, pageSize: 15 },
-  });
+  // const [tableParams, setTableParams] = useState<TableParams>({
+  //   pagination: { current: 1, pageSize: 15 },
+  // });
 
   const columns = (): ColumnsType<Item> => {
     //
@@ -106,15 +106,14 @@ const TableComponent = (props: Props) => {
     return c;
   };
 
-  const handleTableChange = (pagination: TablePaginationConfig) => {
-    //
-    setTableParams({ pagination });
-
-    // `dataSource` is useless since `pageSize` changed
-    // if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-    //   setItems([]);
-    // }
-  };
+  // const handleTableChange = (pagination: TablePaginationConfig) => {
+  //
+  // setTableParams({ pagination });
+  // `dataSource` is useless since `pageSize` changed
+  // if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+  //   setItems([]);
+  // }
+  // };
 
   useEffect(() => {
     // Update table height when the window is resized
@@ -142,6 +141,7 @@ const TableComponent = (props: Props) => {
 
   return (
     <Table
+      style={{ margin: "0px 20px 20px 20px" }}
       size="small"
       rowSelection={{
         type: "checkbox",
@@ -150,8 +150,9 @@ const TableComponent = (props: Props) => {
       rowKey={(x) => x.id}
       columns={columns()}
       dataSource={props.items}
-      pagination={tableParams.pagination}
-      onChange={handleTableChange}
+      // pagination={tableParams.pagination}
+      pagination={false}
+      // onChange={handleTableChange}
       scroll={{ y: tableHeight - 150, x: 50 }}
     />
   );

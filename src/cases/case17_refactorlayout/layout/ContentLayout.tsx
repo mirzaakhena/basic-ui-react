@@ -2,10 +2,12 @@ import { faker } from "@faker-js/faker";
 import { Breadcrumb, Button, Col, Collapse, Input, Row, Space, Table, Tabs, TabsProps, theme } from "antd";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { HTTPData } from "../model/http_data";
+import { HTTPData } from "../model/data_http";
 import { FormInstance } from "antd/lib";
 import FormComponent from "../components/FormComponent";
 import InputOptionComponent, { State, getParamValue, getQueryValue } from "../components/InputOptionsComponent";
+import TableComponent from "../components/TableComponent";
+import JsonView from "@uiw/react-json-view";
 
 interface Props {
   httpData: HTTPData;
@@ -20,6 +22,12 @@ const ContentLayout = (props: Props) => {
 
   const [urlPathValue, setURLPathValue] = useState<string>();
   const [methodUrl, setMethodUrl] = useState<string>();
+
+  const [submitResult, setSubmitResult] = useState({});
+
+  const [responseHeader, setResponseHeader] = useState<Record<string, any>>();
+
+  const [tableItems, setTableItems] = useState([]);
 
   const onUpdated = () => {
     //
@@ -44,17 +52,45 @@ const ContentLayout = (props: Props) => {
     setMethodUrl(props.httpData.method.toUpperCase());
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const savedState = localStorage.getItem(props.httpData.usecase);
+
+    let headers = { "Content-Type": "application/json" };
+
+    let body: string | undefined = undefined;
+
     if (savedState) {
       const httpVariable = JSON.parse(savedState)[props.httpData.usecase];
       const headerOptions = httpVariable["header"] as { [key: string]: State[] };
-      let header = {};
       for (const key in headerOptions) {
-        header = { ...header, [key]: headerOptions[key].find((header) => header.active)?.value ?? undefined };
+        headers = { ...headers, [key]: headerOptions[key].find((header) => header.active)?.value ?? undefined };
       }
-      console.log({ method: methodUrl }, urlPathValue, { body: httpVariable["body"] }, { header });
+
+      body = httpVariable["body"] && JSON.stringify(httpVariable["body"]);
+
+      console.log({ method: methodUrl }, urlPathValue, { body }, { headers });
     }
+
+    const response = await fetch(urlPathValue!, {
+      method: methodUrl,
+      headers,
+      body,
+    });
+    const result = await response.json();
+
+    setSubmitResult(result);
+
+    let resHeader = {};
+    response.headers.forEach((value, key) => {
+      resHeader = { ...resHeader, [key]: value };
+    });
+    setResponseHeader(resHeader);
+
+    if (result.items) {
+      setTableItems(result.items);
+    }
+
+    console.log("disini?");
   };
 
   useEffect(onUpdated);
@@ -99,7 +135,7 @@ const ContentLayout = (props: Props) => {
                 {
                   key: "1",
                   label: "HTTP Variables",
-                  children: <>{httpVariables("query", props.httpData, onUpdated)}</>,
+                  children: <>{httpVariables("query", props.httpData, onUpdated, submitResult, responseHeader)}</>,
                 },
               ]}
             />
@@ -120,17 +156,21 @@ const ContentLayout = (props: Props) => {
                 },
               ]}
             />
-            <Table
+            {/* <Table
               style={{ margin: "0px 20px 20px 20px", border: "1px solid", borderColor: colorBorderSecondary }}
               size="small"
               sticky={true}
               dataSource={generateDummyData(20)}
               columns={tableColumns}
               scroll={{ x: 1300, y: 480 }}
+            /> */}
+            <TableComponent
+              httpData={props.httpData}
+              items={tableItems}
             />
           </>
         ) : (
-          <div style={{ margin: "10px 20px 10px 20px" }}>{httpVariables("command", props.httpData, onUpdated)}</div>
+          <div style={{ margin: "10px 20px 10px 20px" }}>{httpVariables("command", props.httpData, onUpdated, submitResult, responseHeader)}</div>
         )}
       </Space>
     )
@@ -155,13 +195,14 @@ export const updateToStorage = (usecaseName: string, form?: FormInstance) => {
   localStorage.setItem(`${usecaseName}`, JSON.stringify(newValue));
 };
 
-const httpVariables = (requestType: "command" | "query", httpData: HTTPData, onUpdated: () => void) => {
+const httpVariables = (requestType: "command" | "query", httpData: HTTPData, onUpdated: () => void, submitResult: any, responseHeader: any) => {
   //
 
   const tabItemStyle = {
     border: "1px solid",
     borderTop: "none",
     minHeight: "400px",
+    // maxHeight: "600px",
     borderLeftColor: "#f0f0f0",
     borderRightColor: "#f0f0f0",
     borderBottomColor: "#f0f0f0",
@@ -252,72 +293,9 @@ const httpVariables = (requestType: "command" | "query", httpData: HTTPData, onU
     }
   });
 
-  // httpData.body &&
-  //   itemTabs.push({
-  //     label: "Request Body",
-  //     key: "body",
-  //     style: tabItemStyle,
-  //     children: (
-  //       <>
-  //         <FormComponent
-  //           attributeParamType="body"
-  //           httpData={httpData}
-  //         />
-  //       </>
-  //     ),
-  //   });
-
-  // httpData.query &&
-  //   itemTabs.push({
-  //     label: "Query Variables",
-  //     key: "query",
-  //     style: tabItemStyle,
-  //     children: (
-  //       <>
-  //         <InputOptionComponent
-  //           attributeParamType="query"
-  //           httpData={httpData}
-  //           onUpdated={onUpdated}
-  //         />
-  //       </>
-  //     ),
-  //   });
-
-  // httpData.param &&
-  //   itemTabs.push({
-  //     label: "Path Parameters",
-  //     key: "param",
-  //     style: tabItemStyle,
-  //     children: (
-  //       <>
-  //         <InputOptionComponent
-  //           attributeParamType="param"
-  //           httpData={httpData}
-  //           onUpdated={onUpdated}
-  //         />
-  //       </>
-  //     ),
-  //   });
-
-  // httpData.header &&
-  //   itemTabs.push({
-  //     label: "Request Headers",
-  //     key: "header",
-  //     style: tabItemStyle,
-  //     children: (
-  //       <>
-  //         <InputOptionComponent
-  //           attributeParamType="header"
-  //           httpData={httpData}
-  //           onUpdated={onUpdated}
-  //         />
-  //       </>
-  //     ),
-  //   });
-
   return (
     <Row gutter={20}>
-      <Col span={requestType === "command" ? 15 : 11}>
+      <Col span={requestType === "command" ? 15 : 13}>
         <Tabs
           tabBarStyle={tabBarStyle}
           items={itemTabs}
@@ -326,7 +304,7 @@ const httpVariables = (requestType: "command" | "query", httpData: HTTPData, onU
           // activeKey={defaultRequestActiveKey}
         />
       </Col>
-      <Col span={requestType === "command" ? 9 : 13}>
+      <Col span={requestType === "command" ? 9 : 11}>
         <Tabs
           tabBarStyle={tabBarStyle}
           // type="card"
@@ -335,13 +313,27 @@ const httpVariables = (requestType: "command" | "query", httpData: HTTPData, onU
               label: "Response Body",
               key: "body",
               style: tabItemStyle,
-              children: <>Body</>,
+              children: (
+                <JsonView
+                  style={{ margin: "20px" }}
+                  collapsed={1}
+                  displayDataTypes={false}
+                  value={submitResult}
+                />
+              ),
             },
             {
               label: "Response Headers",
               key: "header",
               style: tabItemStyle,
-              children: <>Header</>,
+              children: (
+                <JsonView
+                  style={{ margin: "20px" }}
+                  collapsed={3}
+                  displayDataTypes={false}
+                  value={responseHeader}
+                />
+              ),
             },
           ]}
           // onChange={(key) => onChange(key, "request")}
@@ -377,56 +369,56 @@ function getURLWithParamAndQuery(path: string, param: Record<string, string>, qu
 
   let pu = path;
   for (const key in param) {
-    pu = pu.replace(`{${key}}`, `${param[key]}`);
+    pu = pu.replace(`:${key}`, `${param[key]}`);
   }
 
   return `http://localhost:3000${pu}${query}`;
 }
 
-const tableColumns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Join Date",
-    dataIndex: "joinDate",
-    key: "joinDate",
-  },
-  {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
-  },
-  {
-    title: "Lat Lng",
-    dataIndex: "latLng",
-    key: "latLng",
-  },
-  {
-    title: "Favorit Color",
-    dataIndex: "favoritColor",
-    key: "favoritColor",
-  },
-  {
-    title: "Pet",
-    dataIndex: "pet",
-    key: "pet",
-  },
-  {
-    title: "Company",
-    dataIndex: "company",
-    key: "company",
-  },
-  {
-    title: "Credit Card",
-    dataIndex: "creditCard",
-    key: "creditCard",
-  },
-];
+// const tableColumns = [
+//   {
+//     title: "Name",
+//     dataIndex: "name",
+//     key: "name",
+//   },
+//   {
+//     title: "Age",
+//     dataIndex: "age",
+//     key: "age",
+//   },
+//   {
+//     title: "Join Date",
+//     dataIndex: "joinDate",
+//     key: "joinDate",
+//   },
+//   {
+//     title: "Address",
+//     dataIndex: "address",
+//     key: "address",
+//   },
+//   {
+//     title: "Lat Lng",
+//     dataIndex: "latLng",
+//     key: "latLng",
+//   },
+//   {
+//     title: "Favorit Color",
+//     dataIndex: "favoritColor",
+//     key: "favoritColor",
+//   },
+//   {
+//     title: "Pet",
+//     dataIndex: "pet",
+//     key: "pet",
+//   },
+//   {
+//     title: "Company",
+//     dataIndex: "company",
+//     key: "company",
+//   },
+//   {
+//     title: "Credit Card",
+//     dataIndex: "creditCard",
+//     key: "creditCard",
+//   },
+// ];

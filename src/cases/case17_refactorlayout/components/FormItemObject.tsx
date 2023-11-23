@@ -1,5 +1,5 @@
 import { Form } from "antd";
-import { ObjectType } from "../model/data";
+import { ObjectType } from "../model/data_type";
 import CollapseForm from "./CollapseForm";
 import { FormItemProps } from "./FormItem";
 

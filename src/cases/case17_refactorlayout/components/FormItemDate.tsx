@@ -1,7 +1,7 @@
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import dayjsPluginUTC from "dayjs/plugin/utc";
-import { DateType } from "../model/data";
+import { DateType } from "../model/data_type";
 import { dateTimeFormat } from "../util/constant";
 import FormItem, { FormItemProps } from "./FormItem";
 

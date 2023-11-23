@@ -2,7 +2,7 @@ import { CloseOutlined, MinusCircleOutlined, PlusOutlined } from "@ant-design/ic
 import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Select, Space } from "antd";
 import dayjs from "dayjs";
 import { ReactNode } from "react";
-import { ArrayType } from "../model/data";
+import { ArrayType } from "../model/data_type";
 import { dateTimeFormat } from "../util/constant";
 import CollapseForm from "./CollapseForm";
 import { FormItemProps } from "./FormItem";

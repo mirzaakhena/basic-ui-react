@@ -5,7 +5,7 @@ import Sider from "antd/es/layout/Sider";
 import { Content, Footer } from "antd/es/layout/layout";
 import { useState } from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
-import { HTTPData, Tags } from "../model/http_data";
+import { HTTPData, Tags } from "../model/data_http";
 import ContentLayout from "./ContentLayout";
 
 interface Props {

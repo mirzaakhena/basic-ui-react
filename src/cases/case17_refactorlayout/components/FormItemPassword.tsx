@@ -1,5 +1,5 @@
 import { Input } from "antd";
-import { PasswordType } from "../model/data";
+import { PasswordType } from "../model/data_type";
 import FormItem, { FormItemProps } from "./FormItem";
 
 const FormItemPassword = (props: FormItemProps<PasswordType>) => {

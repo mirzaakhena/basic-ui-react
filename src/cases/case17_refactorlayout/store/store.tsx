@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { HTTPData } from "../model/http_data";
+import { HTTPData } from "../model/data_http";
 
 export default class ApplicationState {
   //

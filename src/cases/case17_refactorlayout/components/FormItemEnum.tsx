@@ -1,5 +1,5 @@
 import { Select } from "antd";
-import { EnumType } from "../model/data";
+import { EnumType } from "../model/data_type";
 import FormItem, { FormItemProps } from "./FormItem";
 
 const FormItemEnum = (props: FormItemProps<EnumType> & { onChange: () => void }) => {

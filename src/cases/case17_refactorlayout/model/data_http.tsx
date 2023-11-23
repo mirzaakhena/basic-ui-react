@@ -1,4 +1,4 @@
-import { InputType } from "./data";
+import { InputType } from "./data_type";
 
 export type Tags = {
   tag: string;

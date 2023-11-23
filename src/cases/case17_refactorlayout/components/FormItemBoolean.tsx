@@ -1,5 +1,5 @@
 import { Checkbox, Form } from "antd";
-import { BooleanType } from "../model/data";
+import { BooleanType } from "../model/data_type";
 import { FormItemProps } from "./FormItem";
 
 const FormItemBoolean = (props: FormItemProps<BooleanType>) => {

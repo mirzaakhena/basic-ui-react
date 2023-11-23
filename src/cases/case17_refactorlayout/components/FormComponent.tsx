@@ -2,8 +2,8 @@ import { Form, theme } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { InputType } from "../model/data";
-import { HTTPData } from "../model/http_data";
+import { InputType } from "../model/data_type";
+import { HTTPData } from "../model/data_http";
 import { dateTimeFormat } from "../util/constant";
 import { pascalToCamel } from "../util/convert";
 import { createDebounce } from "../util/debounce";
@@ -61,7 +61,7 @@ const FormComponent = (props: Props) => {
       <div
         style={{
           overflowY: "scroll",
-          maxHeight: "calc(100vh - 310px)",
+          // maxHeight: "calc(100vh - 310px)",
           padding: "0px 20px 10px 0px",
           border: "none",
         }}

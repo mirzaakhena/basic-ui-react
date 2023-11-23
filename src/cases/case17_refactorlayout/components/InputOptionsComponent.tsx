@@ -1,8 +1,8 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { Button, Col, Divider, Form, FormInstance, Input, Row, Space, Switch, theme } from "antd";
 import { useEffect, useState } from "react";
-import { InputType } from "../model/data";
-import { HTTPData } from "../model/http_data";
+import { InputType } from "../model/data_type";
+import { HTTPData } from "../model/data_http";
 import { pascalToCamel } from "../util/convert";
 import { createDebounce } from "../util/debounce";
 import { useForm } from "antd/es/form/Form";
