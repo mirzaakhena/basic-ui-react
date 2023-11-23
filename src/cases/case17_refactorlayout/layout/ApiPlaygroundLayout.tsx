@@ -5,36 +5,47 @@ import Sider from "antd/es/layout/Sider";
 import { Content, Footer } from "antd/es/layout/layout";
 import { useState } from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
+import { HTTPData, Tags } from "../model/http_data";
 import ContentLayout from "./ContentLayout";
 
-const ApiPlaygroundLayout = () => {
+interface Props {
+  tags: Tags[];
+}
+
+const ApiPlaygroundLayout = (props: Props) => {
   //
 
   const [collapsed, setCollapsed] = useState(false);
 
+  const [selectedHTTPData, setSelectedHTTPData] = useState<HTTPData>();
+
   const onClick: MenuProps["onClick"] = (e) => {
     //
+    const x = props.tags.find((x) => x.tag === e.keyPath[1])?.httpDatas.find((x) => `/usecase/${x.tag}/${x.usecase}` === e.keyPath[0]);
+    if (x) {
+      setSelectedHTTPData(x);
+    }
   };
 
-  const menuItems = [
+  const menuItems = props.tags.map((menuItem) => {
     //
-    getItem(true, "user", "user", [
-      //
-      getItem(false, "userCreate", "/usecase/user/userCreate"),
-      getItem(false, "userGetAll", "/usecase/user/userGetAll"),
-    ]),
-    getItem(true, "product", "product", [
-      //
-      getItem(false, "productChangeStatus", "/usecase/product/productChangeStatus"),
-      getItem(false, "productGetAll", "/usecase/product/productGetAll"),
-    ]),
-  ];
+
+    return getItem(
+      <FileOutlined />,
+      menuItem.tag,
+      menuItem.tag,
+      menuItem.httpDatas.map((c) => {
+        return getItem(<SwapRightOutlined />, c.usecase, `/usecase/${menuItem.tag}/${c.usecase}`);
+      })
+    );
+  });
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
         collapsible
         collapsed={collapsed}
+        width={260}
         onCollapse={(value) => setCollapsed(value)}
         style={{
           position: "fixed",
@@ -42,7 +53,6 @@ const ApiPlaygroundLayout = () => {
           zIndex: 1000,
           overflowY: "auto",
         }}
-        width={260}
       >
         <Menu
           theme="dark"
@@ -63,7 +73,7 @@ const ApiPlaygroundLayout = () => {
             <Route
               key="usecase"
               path={"/usecase/:tagName/:usecaseName"}
-              element={<ContentLayout />}
+              element={<ContentLayout httpData={selectedHTTPData!} />}
             />
           </Routes>
         </Content>
@@ -77,12 +87,12 @@ export default ApiPlaygroundLayout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
-function getItem(isFirstLevel: boolean, label: React.ReactNode, key: React.Key, children?: MenuItem[]): MenuItem {
+function getItem(icon: JSX.Element, label: React.ReactNode, key: React.Key, children?: MenuItem[]): MenuItem {
   //
 
   return {
     key,
-    icon: isFirstLevel ? <FileOutlined /> : <SwapRightOutlined />,
+    icon,
     children,
     label,
     itemIcon: <NavLink to={`${key}`} />,

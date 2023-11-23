@@ -1,151 +1,161 @@
 import { faker } from "@faker-js/faker";
-import { Breadcrumb, Button, Col, Collapse, Input, Row, Space, Table, Tabs, message, theme } from "antd";
-import { NavLink, useParams } from "react-router-dom";
+import { Breadcrumb, Button, Col, Collapse, Input, Row, Space, Table, Tabs, TabsProps, theme } from "antd";
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import { HTTPData } from "../model/http_data";
+import { FormInstance } from "antd/lib";
+import FormComponent from "../components/FormComponent";
+import InputOptionComponent, { State, getParamValue, getQueryValue } from "../components/InputOptionsComponent";
 
 interface Props {
-  // message: string;
+  httpData: HTTPData;
 }
 
 const ContentLayout = (props: Props) => {
   //
 
-  const params = useParams<{
-    tagName: string;
-    usecaseName: string;
-  }>();
-
   const {
     token: { colorBgContainer, colorBorderSecondary },
   } = theme.useToken();
 
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
-    },
-    {
-      title: "Join Date",
-      dataIndex: "joinDate",
-      key: "joinDate",
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-    },
-    {
-      title: "Lat Lng",
-      dataIndex: "latLng",
-      key: "latLng",
-    },
-    {
-      title: "Favorit Color",
-      dataIndex: "favoritColor",
-      key: "favoritColor",
-    },
-    {
-      title: "Pet",
-      dataIndex: "pet",
-      key: "pet",
-    },
-    {
-      title: "Company",
-      dataIndex: "company",
-      key: "company",
-    },
-    {
-      title: "Credit Card",
-      dataIndex: "creditCard",
-      key: "creditCard",
-    },
-  ];
+  const [urlPathValue, setURLPathValue] = useState<string>();
+  const [methodUrl, setMethodUrl] = useState<string>();
 
-  const dataSource = generateDummyData(20);
+  const onUpdated = () => {
+    //
+
+    if (!props.httpData) {
+      return;
+    }
+
+    const savedState = localStorage.getItem(`${props.httpData.usecase}`);
+    const jsonB = savedState ? JSON.parse(savedState)[props.httpData.usecase] : undefined;
+
+    const newValue = {
+      [props.httpData.usecase]: {
+        ...jsonB,
+      },
+    };
+
+    const value = getParamValue(newValue[props.httpData.usecase]["param"]);
+    const query = getQueryValue(newValue[props.httpData.usecase]["query"]);
+    setURLPathValue(getURLWithParamAndQuery(props.httpData.path, value, query));
+
+    setMethodUrl(props.httpData.method.toUpperCase());
+  };
+
+  const onSubmit = () => {
+    const savedState = localStorage.getItem(props.httpData.usecase);
+    if (savedState) {
+      const httpVariable = JSON.parse(savedState)[props.httpData.usecase];
+      const headerOptions = httpVariable["header"] as { [key: string]: State[] };
+      let header = {};
+      for (const key in headerOptions) {
+        header = { ...header, [key]: headerOptions[key].find((header) => header.active)?.value ?? undefined };
+      }
+      console.log({ method: methodUrl }, urlPathValue, { body: httpVariable["body"] }, { header });
+    }
+  };
+
+  useEffect(onUpdated);
 
   return (
-    <Space
-      direction="vertical"
-      style={{
-        backgroundColor: colorBgContainer,
-        display: "flex",
-        margin: "20px",
-      }}
-    >
-      <Space.Compact
-        style={{ padding: "20px 20px 0px 20px" }}
-        block
+    props.httpData && (
+      <Space
+        direction="vertical"
+        style={{
+          background: colorBgContainer,
+          display: "flex",
+          margin: "0px",
+        }}
       >
-        <Input
-          addonBefore={"GET"}
-          value={`http://localhost:3000/usecase/${params.tagName}/${params.usecaseName}`}
-          size="large"
-          readOnly
-        />
-        <Button
-          htmlType="submit"
-          type="primary"
-          size="large"
+        <Space.Compact
+          style={{ padding: "20px 20px 0px 20px" }}
+          block
         >
-          Submit
-        </Button>
-      </Space.Compact>
+          <Input
+            addonBefore={methodUrl}
+            value={urlPathValue}
+            size="large"
+            readOnly
+          />
+          <Button
+            onClick={onSubmit}
+            htmlType="submit"
+            type="primary"
+            size="large"
+          >
+            Submit
+          </Button>
+        </Space.Compact>
 
-      {params.usecaseName!.toLowerCase().endsWith("getall") ? (
-        <>
-          <Collapse
-            bordered={false}
-            ghost
-            style={{ margin: "0px 5px 0px 5px" }}
-            items={[
-              {
-                key: "1",
-                label: "HTTP Variables",
-                children: <>{httpVariables("query")}</>,
-              },
-            ]}
-          />
-          <Breadcrumb
-            style={{ margin: "0px 5px 0px 20px" }}
-            items={[
-              {
-                title: <NavLink to={"/user/userCreate"}>Home</NavLink>,
-              },
-              {
-                title: <a href="">Application Center</a>,
-              },
-              {
-                title: <a href="">Application List</a>,
-              },
-              {
-                title: "An Application",
-              },
-            ]}
-          />
-          <Table
-            style={{ margin: "0px 20px 20px 20px", border: "1px solid", borderColor: colorBorderSecondary }}
-            size="small"
-            sticky={true}
-            dataSource={dataSource}
-            columns={columns}
-            scroll={{ x: 1300, y: 480 }}
-          />
-        </>
-      ) : (
-        <div style={{ margin: "10px 20px 10px 20px" }}>{httpVariables("command")}</div>
-      )}
-    </Space>
+        {props.httpData.usecase!.toLowerCase().endsWith("getall") ? (
+          <>
+            <Collapse
+              bordered={false}
+              ghost
+              style={{ margin: "0px 5px 0px 5px" }}
+              items={[
+                {
+                  key: "1",
+                  label: "HTTP Variables",
+                  children: <>{httpVariables("query", props.httpData, onUpdated)}</>,
+                },
+              ]}
+            />
+            <Breadcrumb
+              style={{ margin: "0px 20px 10px 20px" }}
+              items={[
+                {
+                  title: <NavLink to={"/usecase/user/userCreate"}>Home</NavLink>,
+                },
+                {
+                  title: <a href="">Application Center</a>,
+                },
+                {
+                  title: <a href="">Application List</a>,
+                },
+                {
+                  title: "An Application",
+                },
+              ]}
+            />
+            <Table
+              style={{ margin: "0px 20px 20px 20px", border: "1px solid", borderColor: colorBorderSecondary }}
+              size="small"
+              sticky={true}
+              dataSource={generateDummyData(20)}
+              columns={tableColumns}
+              scroll={{ x: 1300, y: 480 }}
+            />
+          </>
+        ) : (
+          <div style={{ margin: "10px 20px 10px 20px" }}>{httpVariables("command", props.httpData, onUpdated)}</div>
+        )}
+      </Space>
+    )
   );
 };
 
 export default ContentLayout;
 
-const httpVariables = (requestType: "command" | "query") => {
+export const updateToStorage = (usecaseName: string, form?: FormInstance) => {
+  //
+
+  const objInStorage = JSON.parse(localStorage.getItem(`${usecaseName}`) || "{}");
+  const objInField = form && form.getFieldsValue();
+
+  const newValue = {
+    [usecaseName]: {
+      ...objInStorage[usecaseName],
+      ...objInField?.[usecaseName],
+    },
+  };
+
+  localStorage.setItem(`${usecaseName}`, JSON.stringify(newValue));
+};
+
+const httpVariables = (requestType: "command" | "query", httpData: HTTPData, onUpdated: () => void) => {
   //
 
   const tabItemStyle = {
@@ -157,64 +167,181 @@ const httpVariables = (requestType: "command" | "query") => {
     borderBottomColor: "#f0f0f0",
   };
 
+  const tabBarStyle = {
+    margin: 0,
+    border: "none",
+  };
+
+  const itemTabs: TabsProps["items"] = [];
+
+  const keys = ["body", "param", "query", "header"];
+  Object.keys(httpData).forEach((key) => {
+    if (keys.some((k) => key === k)) {
+      //
+
+      if (key === "body") {
+        itemTabs.push({
+          label: "Request Body",
+          key: "body",
+          style: tabItemStyle,
+          children: (
+            <>
+              <FormComponent
+                attributeParamType="body"
+                httpData={httpData}
+              />
+            </>
+          ),
+        });
+        return;
+      }
+
+      if (key === "param") {
+        itemTabs.push({
+          label: "Path Parameters",
+          key: "param",
+          style: tabItemStyle,
+          children: (
+            <>
+              <InputOptionComponent
+                attributeParamType="param"
+                httpData={httpData}
+                onUpdated={onUpdated}
+              />
+            </>
+          ),
+        });
+        return;
+      }
+
+      if (key === "query") {
+        itemTabs.push({
+          label: "Query Variables",
+          key: "query",
+          style: tabItemStyle,
+          children: (
+            <>
+              <InputOptionComponent
+                attributeParamType="query"
+                httpData={httpData}
+                onUpdated={onUpdated}
+              />
+            </>
+          ),
+        });
+        return;
+      }
+
+      if (key === "header") {
+        itemTabs.push({
+          label: "Request Headers",
+          key: "header",
+          style: tabItemStyle,
+          children: (
+            <>
+              <InputOptionComponent
+                attributeParamType="header"
+                httpData={httpData}
+                onUpdated={onUpdated}
+              />
+            </>
+          ),
+        });
+        return;
+      }
+    }
+  });
+
+  // httpData.body &&
+  //   itemTabs.push({
+  //     label: "Request Body",
+  //     key: "body",
+  //     style: tabItemStyle,
+  //     children: (
+  //       <>
+  //         <FormComponent
+  //           attributeParamType="body"
+  //           httpData={httpData}
+  //         />
+  //       </>
+  //     ),
+  //   });
+
+  // httpData.query &&
+  //   itemTabs.push({
+  //     label: "Query Variables",
+  //     key: "query",
+  //     style: tabItemStyle,
+  //     children: (
+  //       <>
+  //         <InputOptionComponent
+  //           attributeParamType="query"
+  //           httpData={httpData}
+  //           onUpdated={onUpdated}
+  //         />
+  //       </>
+  //     ),
+  //   });
+
+  // httpData.param &&
+  //   itemTabs.push({
+  //     label: "Path Parameters",
+  //     key: "param",
+  //     style: tabItemStyle,
+  //     children: (
+  //       <>
+  //         <InputOptionComponent
+  //           attributeParamType="param"
+  //           httpData={httpData}
+  //           onUpdated={onUpdated}
+  //         />
+  //       </>
+  //     ),
+  //   });
+
+  // httpData.header &&
+  //   itemTabs.push({
+  //     label: "Request Headers",
+  //     key: "header",
+  //     style: tabItemStyle,
+  //     children: (
+  //       <>
+  //         <InputOptionComponent
+  //           attributeParamType="header"
+  //           httpData={httpData}
+  //           onUpdated={onUpdated}
+  //         />
+  //       </>
+  //     ),
+  //   });
+
   return (
     <Row gutter={20}>
       <Col span={requestType === "command" ? 15 : 11}>
         <Tabs
-          tabBarStyle={{
-            margin: 0,
-            border: "none",
-          }}
-          type="card"
-          items={[
-            {
-              label: "Request Body",
-              key: "body",
-              style: tabItemStyle,
-              children: <></>,
-            },
-            {
-              label: "Path Parameters",
-              key: "param",
-              style: tabItemStyle,
-              children: <></>,
-            },
-            {
-              label: "Query Variables",
-              key: "query",
-              style: tabItemStyle,
-              children: <></>,
-            },
-            {
-              label: "Request Headers",
-              key: "header",
-              style: tabItemStyle,
-              children: <></>,
-            },
-          ]}
+          tabBarStyle={tabBarStyle}
+          items={itemTabs}
+          // type="card"
           // onChange={(key) => onChange(key, "request")}
           // activeKey={defaultRequestActiveKey}
         />
       </Col>
       <Col span={requestType === "command" ? 9 : 13}>
         <Tabs
-          tabBarStyle={{
-            margin: 0,
-            border: "none",
-          }}
-          type="card"
+          tabBarStyle={tabBarStyle}
+          // type="card"
           items={[
             {
               label: "Response Body",
               key: "body",
               style: tabItemStyle,
-              children: <></>,
+              children: <>Body</>,
             },
             {
               label: "Response Headers",
               key: "header",
               style: tabItemStyle,
-              children: <></>,
+              children: <>Header</>,
             },
           ]}
           // onChange={(key) => onChange(key, "request")}
@@ -244,3 +371,62 @@ const generateDummyData = (count: number) => {
 
   return dummyData;
 };
+
+function getURLWithParamAndQuery(path: string, param: Record<string, string>, query: string) {
+  //
+
+  let pu = path;
+  for (const key in param) {
+    pu = pu.replace(`{${key}}`, `${param[key]}`);
+  }
+
+  return `http://localhost:3000${pu}${query}`;
+}
+
+const tableColumns = [
+  {
+    title: "Name",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "Age",
+    dataIndex: "age",
+    key: "age",
+  },
+  {
+    title: "Join Date",
+    dataIndex: "joinDate",
+    key: "joinDate",
+  },
+  {
+    title: "Address",
+    dataIndex: "address",
+    key: "address",
+  },
+  {
+    title: "Lat Lng",
+    dataIndex: "latLng",
+    key: "latLng",
+  },
+  {
+    title: "Favorit Color",
+    dataIndex: "favoritColor",
+    key: "favoritColor",
+  },
+  {
+    title: "Pet",
+    dataIndex: "pet",
+    key: "pet",
+  },
+  {
+    title: "Company",
+    dataIndex: "company",
+    key: "company",
+  },
+  {
+    title: "Credit Card",
+    dataIndex: "creditCard",
+    key: "creditCard",
+  },
+];

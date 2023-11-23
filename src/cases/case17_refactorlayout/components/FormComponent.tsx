@@ -1,8 +1,9 @@
-import { Button, Form, theme } from "antd";
+import { Form, theme } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { InputType } from "../model/data";
+import { HTTPData } from "../model/http_data";
 import { dateTimeFormat } from "../util/constant";
 import { pascalToCamel } from "../util/convert";
 import { createDebounce } from "../util/debounce";
@@ -15,70 +16,46 @@ import FormItemObject from "./FormItemObject";
 import FormItemPassword from "./FormItemPassword";
 import FormItemString from "./FormItemString";
 import FormItemTextArea from "./FormItemTextArea";
+import { updateToStorage } from "../layout/ContentLayout";
 
 interface Props {
   attributeParamType: "body" | "param" | "query" | "header" | "cookie";
-  usecaseName: string;
-  recordInputType: Record<string, InputType>;
+  httpData: HTTPData;
 }
 
-const TableAndFormComponent = (props: Props) => {
+const FormComponent = (props: Props) => {
   //
 
   const [form] = useForm();
 
   // insert to local storage
-  const onChange = createDebounce(() => {
-    const jsonA = form.getFieldsValue();
-    if (jsonA) {
-      const savedState = localStorage.getItem(`${props.usecaseName}`);
-      const jsonB = savedState ? JSON.parse(savedState)[props.usecaseName] : undefined;
-
-      const newValue = {
-        [props.usecaseName]: {
-          ...jsonB,
-          ...jsonA[props.usecaseName],
-        },
-      };
-
-      let data = JSON.stringify(newValue);
-      localStorage.setItem(`${props.usecaseName}`, data);
-    }
-  });
+  const onChange = createDebounce(() => updateToStorage(props.httpData.usecase, form));
 
   // insert to form field
   const resetFieldValues = () => {
-    const savedState = localStorage.getItem(`${props.usecaseName}`);
-    const jsonObj = savedState ? JSON.parse(savedState)[props.usecaseName][props.attributeParamType] : null;
-    const data = generateInitialValue(props.recordInputType, jsonObj);
-    form.setFieldsValue({ [props.usecaseName]: { [props.attributeParamType]: data } });
+    // const savedState = localStorage.getItem(`${props.httpData.usecase}`);
+    // const jsonObj = savedState ? JSON.parse(savedState)[props.httpData.usecase][props.attributeParamType] : null;
+    // const data = generateInitialValue(props.httpData[props.attributeParamType]!, jsonObj);
+
+    const savedState = JSON.parse(localStorage.getItem(`${props.httpData.usecase}`) || "{}");
+    const jsonObj = savedState?.[props.httpData.usecase]?.[props.attributeParamType];
+    const data = generateInitialValue(props.httpData[props.attributeParamType]!, jsonObj);
+    form.setFieldsValue({ [props.httpData.usecase]: { [props.attributeParamType]: data } });
   };
 
   const [initialized, setInitialized] = useState(false);
-
-  useEffect(() => {
-    resetFieldValues();
-    setInitialized(true);
-  }, [form]);
-
+  useEffect(() => setInitialized(true), [form]);
   setTimeout(() => initialized && resetFieldValues(), 50);
 
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const onFinish = (value: any) => {
-    //
-    console.log("<<", value);
-  };
-
   return (
     <Form
       style={{ background: colorBgContainer, padding: "20px" }}
       form={form}
       onChange={onChange}
-      // onFinish={console.log}
-      onFinish={onFinish}
       layout="vertical"
     >
       <div
@@ -89,22 +66,13 @@ const TableAndFormComponent = (props: Props) => {
           border: "none",
         }}
       >
-        {generateForm(props.recordInputType, [pascalToCamel(props.usecaseName), "body"], onChange)}
+        {generateForm(props.httpData[props.attributeParamType]!, [pascalToCamel(props.httpData.usecase), "body"], onChange)}
       </div>
-
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-        >
-          Submit
-        </Button>
-      </Form.Item>
     </Form>
   );
 };
 
-export default TableAndFormComponent;
+export default FormComponent;
 
 const generateInitialValue = (recordInputType: Record<string, InputType>, jsonObj: any) => {
   //
