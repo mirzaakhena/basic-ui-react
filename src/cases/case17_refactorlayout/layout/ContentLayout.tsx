@@ -23,11 +23,9 @@ const ContentLayout = (props: Props) => {
   const [urlPathValue, setURLPathValue] = useState<string>();
   const [methodUrl, setMethodUrl] = useState<string>();
 
-  const [submitResult, setSubmitResult] = useState({});
+  const [submitResult, setSubmitResult] = useState<any>({});
 
   const [responseHeader, setResponseHeader] = useState<Record<string, any>>();
-
-  const [tableItems, setTableItems] = useState([]);
 
   const onUpdated = () => {
     //
@@ -50,9 +48,18 @@ const ContentLayout = (props: Props) => {
     setURLPathValue(getURLWithParamAndQuery(props.httpData.path, value, query));
 
     setMethodUrl(props.httpData.method.toUpperCase());
+
+    const responseHeader = newValue[props.httpData.usecase]["responseHeaders"];
+    setResponseHeader(responseHeader ?? {});
+
+    const responseBody = newValue[props.httpData.usecase]["responseBody"];
+
+    setSubmitResult(responseBody ?? {});
   };
 
   const onSubmit = async () => {
+    //
+
     const savedState = localStorage.getItem(props.httpData.usecase);
 
     let headers = { "Content-Type": "application/json" };
@@ -86,14 +93,24 @@ const ContentLayout = (props: Props) => {
     });
     setResponseHeader(resHeader);
 
-    if (result.items) {
-      setTableItems(result.items);
-    }
+    const objInStorage = JSON.parse(localStorage.getItem(props.httpData.usecase) || "{}");
 
-    console.log("disini?");
+    const newValue = {
+      [props.httpData.usecase]: {
+        ...objInStorage[props.httpData.usecase],
+        responseBody: result,
+        responseHeaders: resHeader,
+      },
+    };
+
+    localStorage.setItem(props.httpData.usecase, JSON.stringify(newValue));
+
+    // if (result.items) {
+    //   setTableItems(result.items);
+    // }
   };
 
-  useEffect(onUpdated);
+  useEffect(onUpdated, [props.httpData]);
 
   return (
     props.httpData && (
@@ -128,7 +145,7 @@ const ContentLayout = (props: Props) => {
         {props.httpData.usecase!.toLowerCase().endsWith("getall") ? (
           <>
             <Collapse
-              bordered={false}
+              // bordered={false}
               ghost
               style={{ margin: "0px 5px 0px 5px" }}
               items={[
@@ -139,7 +156,7 @@ const ContentLayout = (props: Props) => {
                 },
               ]}
             />
-            <Breadcrumb
+            {/* <Breadcrumb
               style={{ margin: "0px 20px 10px 20px" }}
               items={[
                 {
@@ -155,7 +172,7 @@ const ContentLayout = (props: Props) => {
                   title: "An Application",
                 },
               ]}
-            />
+            /> */}
             {/* <Table
               style={{ margin: "0px 20px 20px 20px", border: "1px solid", borderColor: colorBorderSecondary }}
               size="small"
@@ -164,9 +181,10 @@ const ContentLayout = (props: Props) => {
               columns={tableColumns}
               scroll={{ x: 1300, y: 480 }}
             /> */}
+
             <TableComponent
               httpData={props.httpData}
-              items={tableItems}
+              items={submitResult?.items ?? []}
             />
           </>
         ) : (
@@ -201,8 +219,9 @@ const httpVariables = (requestType: "command" | "query", httpData: HTTPData, onU
   const tabItemStyle = {
     border: "1px solid",
     borderTop: "none",
-    minHeight: "400px",
+    // minHeight: "300px",
     // maxHeight: "600px",
+    paddingBottom: "40px",
     borderLeftColor: "#f0f0f0",
     borderRightColor: "#f0f0f0",
     borderBottomColor: "#f0f0f0",

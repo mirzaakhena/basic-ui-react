@@ -47,9 +47,11 @@ const InputOptionComponent = (props: Props) => {
     }
   });
 
-  const [initialized, setInitialized] = useState(false);
-  useEffect(() => setInitialized(true), [form]);
-  setTimeout(() => initialized && resetFieldValues(), 50);
+  // const [initialized, setInitialized] = useState(false);
+  // useEffect(() => setInitialized(true), [form]);
+  // setTimeout(() => initialized && resetFieldValues(), 50);
+
+  useEffect(resetFieldValues, [props.httpData]);
 
   const {
     token: { colorBgContainer },
@@ -61,7 +63,7 @@ const InputOptionComponent = (props: Props) => {
       onChange={onChange}
       autoComplete="off"
       layout="vertical"
-      style={{ background: colorBgContainer, padding: "20px" }}
+      style={{ background: colorBgContainer, padding: "0px 20px" }}
     >
       {generateItem(props.httpData[props.attributeParamType]!, [pascalToCamel(props.httpData.usecase), props.attributeParamType], form, onChange)}
       {/* <Form.Item>
@@ -118,7 +120,7 @@ function generateItem(recordInputType: Record<string, InputType>, previousField:
     formItems.push(
       <Form.Item
         key={fieldName}
-        style={{ marginBottom: "50px" }}
+        style={{ marginBottom: "0px" }}
       >
         <Divider
           orientation="left"

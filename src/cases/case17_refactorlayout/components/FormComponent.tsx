@@ -43,9 +43,11 @@ const FormComponent = (props: Props) => {
     form.setFieldsValue({ [props.httpData.usecase]: { [props.attributeParamType]: data } });
   };
 
-  const [initialized, setInitialized] = useState(false);
-  useEffect(() => setInitialized(true), [form]);
-  setTimeout(() => initialized && resetFieldValues(), 50);
+  // const [initialized, setInitialized] = useState(false);
+  // useEffect(() => setInitialized(true), [form]);
+  // setTimeout(() => initialized && resetFieldValues(), 50);
+
+  useEffect(resetFieldValues, [props.httpData]);
 
   const {
     token: { colorBgContainer },

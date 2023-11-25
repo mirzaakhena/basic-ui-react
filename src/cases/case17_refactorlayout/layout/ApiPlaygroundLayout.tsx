@@ -77,7 +77,7 @@ const ApiPlaygroundLayout = (props: Props) => {
             />
           </Routes>
         </Content>
-        <Footer style={{ textAlign: "center", backgroundColor: "red" }}>API Playground ©2023 Created by Mirza Akhena</Footer>
+        <Footer style={{ textAlign: "center", backgroundColor: "red" }}>Use Case API Playground ©2023 Created by Mirza Akhena</Footer>
       </Layout>
     </Layout>
   );
