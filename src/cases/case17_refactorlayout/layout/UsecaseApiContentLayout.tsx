@@ -1,23 +1,21 @@
-import { faker } from "@faker-js/faker";
-import { Breadcrumb, Button, Col, Collapse, Input, Row, Space, Table, Tabs, TabsProps, theme } from "antd";
-import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
-import { HTTPData } from "../model/data_http";
+import JsonView from "@uiw/react-json-view";
+import { Button, Col, Collapse, Input, Row, Space, Tabs, TabsProps, theme } from "antd";
 import { FormInstance } from "antd/lib";
+import { useEffect, useState } from "react";
 import FormComponent from "../components/FormComponent";
 import InputOptionComponent, { State, getParamValue, getQueryValue } from "../components/InputOptionsComponent";
 import TableComponent from "../components/TableComponent";
-import JsonView from "@uiw/react-json-view";
+import { HTTPData } from "../model/data_http";
 
 interface Props {
   httpData: HTTPData;
 }
 
-const ContentLayout = (props: Props) => {
+const UsecaseApiContentLayout = (props: Props) => {
   //
 
   const {
-    token: { colorBgContainer, colorBorderSecondary },
+    token: { colorBgContainer },
   } = theme.useToken();
 
   const [urlPathValue, setURLPathValue] = useState<string>();
@@ -195,7 +193,7 @@ const ContentLayout = (props: Props) => {
   );
 };
 
-export default ContentLayout;
+export default UsecaseApiContentLayout;
 
 export const updateToStorage = (usecaseName: string, form?: FormInstance) => {
   //
@@ -363,25 +361,25 @@ const httpVariables = (requestType: "command" | "query", httpData: HTTPData, onU
   );
 };
 
-const generateDummyData = (count: number) => {
-  const dummyData = [];
-  for (let i = 3; i <= count + 2; i++) {
-    dummyData.push({
-      key: i.toString(),
-      name: faker.person.fullName(),
-      age: faker.number.int({ min: 15, max: 50 }),
-      joinDate: faker.date.birthdate().toISOString(),
-      address: faker.location.streetAddress(),
-      latLng: `${faker.location.latitude()}, ${faker.location.longitude()}`,
-      favoritColor: faker.color.human(),
-      pet: faker.animal.type(),
-      company: faker.company.name(),
-      creditCard: faker.finance.creditCardNumber(),
-    });
-  }
+// const generateDummyData = (count: number) => {
+//   const dummyData = [];
+//   for (let i = 3; i <= count + 2; i++) {
+//     dummyData.push({
+//       key: i.toString(),
+//       name: faker.person.fullName(),
+//       age: faker.number.int({ min: 15, max: 50 }),
+//       joinDate: faker.date.birthdate().toISOString(),
+//       address: faker.location.streetAddress(),
+//       latLng: `${faker.location.latitude()}, ${faker.location.longitude()}`,
+//       favoritColor: faker.color.human(),
+//       pet: faker.animal.type(),
+//       company: faker.company.name(),
+//       creditCard: faker.finance.creditCardNumber(),
+//     });
+//   }
 
-  return dummyData;
-};
+//   return dummyData;
+// };
 
 function getURLWithParamAndQuery(path: string, param: Record<string, string>, query: string) {
   //

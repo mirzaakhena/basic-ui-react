@@ -1,9 +1,10 @@
 import { Form, theme } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import { InputType } from "../model/data_type";
+import { useEffect } from "react";
+import { updateToStorage } from "../layout/UsecaseApiContentLayout";
 import { HTTPData } from "../model/data_http";
+import { InputType } from "../model/data_type";
 import { dateTimeFormat } from "../util/constant";
 import { pascalToCamel } from "../util/convert";
 import { createDebounce } from "../util/debounce";
@@ -16,7 +17,6 @@ import FormItemObject from "./FormItemObject";
 import FormItemPassword from "./FormItemPassword";
 import FormItemString from "./FormItemString";
 import FormItemTextArea from "./FormItemTextArea";
-import { updateToStorage } from "../layout/ContentLayout";
 
 interface Props {
   attributeParamType: "body" | "param" | "query" | "header" | "cookie";

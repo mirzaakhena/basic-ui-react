@@ -28,55 +28,6 @@ const ContentComponent = (props: Props) => {
     background: colorBgContainer,
   };
 
-  const onChange = (key: string, tipe: "request" | "response") => {
-    // console.log(tipe, key);
-    // TODO harus mengingat tab mana yg dibuka
-    // const jsonInString = localStorage.getItem(props.httpData.usecase);
-    // const jsonB = jsonInString ? JSON.parse(jsonInString)[props.httpData.usecase] : undefined;
-    // const newValue = {
-    //   [props.httpData.usecase]: {
-    //     ...jsonB,
-    //     tabActive: {
-    //       ...jsonB.tabActive,
-    //       [tipe]: key,
-    //     },
-    //   },
-    // };
-    // localStorage.setItem(props.httpData.usecase, JSON.stringify(newValue));
-    // if (tipe === "request") {
-    //   setDefaultRequestActiveKey(key);
-    // }
-    // if (tipe === "response") {
-    //   setDefaultResponseActiveKey(key);
-    // }
-  };
-
-  // const [defaultRequestActiveKey, setDefaultRequestActiveKey] = useState("body");
-  // const [defaultResponseActiveKey, setDefaultResponseActiveKey] = useState("body");
-
-  // const [defaultActiveKey, setDefaultActiveKey] = useState({ request: "body", response: "body" });
-
-  // const setDefaultActiveKey = (tipe: string) => {
-  //   const jsonInString = localStorage.getItem(props.httpData.usecase);
-  //   const jsonB = jsonInString ? JSON.parse(jsonInString)[props.httpData.usecase] : undefined;
-  //   return jsonB ? jsonB.tabActive[tipe] ?? "body" : "body";
-  // };
-
-  // useEffect(() => {
-  //   const jsonInString = localStorage.getItem(props.httpData.usecase);
-  //   const jsonB = jsonInString ? JSON.parse(jsonInString)[props.httpData.usecase] : undefined;
-  //   setDefaultRequestActiveKey(jsonB ? jsonB.tabActive.request ?? "body" : "body");
-  //   setDefaultRequestActiveKey(jsonB ? jsonB.tabActive.response ?? "body" : "body");
-  // }, []);
-
-  // setTimeout(() => {
-  //   const jsonInString = localStorage.getItem(props.httpData.usecase);
-  //   const jsonB = jsonInString ? JSON.parse(jsonInString)[props.httpData.usecase] : undefined;
-  //   const request = jsonB ? jsonB.tabActive.request ?? "body" : "body";
-  //   const response = jsonB ? jsonB.tabActive.response ?? "body" : "body";
-  //   setDefaultActiveKey({ request, response });
-  // }, 100);
-
   return (
     <>
       <Layout style={{ padding: "24px 24px 24px" }}>
@@ -86,8 +37,6 @@ const ContentComponent = (props: Props) => {
               tabBarStyle={tabBarStyle}
               type="card"
               items={generateRequestTabItems(props.httpData, props.onUpdated)}
-              onChange={(key) => onChange(key, "request")}
-              // activeKey={defaultRequestActiveKey}
             />
           </Col>
           <Col span={10}>
@@ -95,8 +44,6 @@ const ContentComponent = (props: Props) => {
               tabBarStyle={tabBarStyle}
               type="card"
               items={generateResponseTabItems(props.httpData, props.onUpdated)}
-              onChange={(key) => onChange(key, "response")}
-              // activeKey={defaultResponseActiveKey}
             />
           </Col>
         </Row>

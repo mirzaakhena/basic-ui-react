@@ -6,13 +6,13 @@ import { Content, Footer } from "antd/es/layout/layout";
 import { useState } from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
 import { HTTPData, Tags } from "../model/data_http";
-import ContentLayout from "./ContentLayout";
+import UsecaseApiContentLayout from "./UsecaseApiContentLayout";
 
 interface Props {
   tags: Tags[];
 }
 
-const ApiPlaygroundLayout = (props: Props) => {
+const UsecaseApiLayout = (props: Props) => {
   //
 
   const [collapsed, setCollapsed] = useState(false);
@@ -73,17 +73,17 @@ const ApiPlaygroundLayout = (props: Props) => {
             <Route
               key="usecase"
               path={"/usecase/:tagName/:usecaseName"}
-              element={<ContentLayout httpData={selectedHTTPData!} />}
+              element={<UsecaseApiContentLayout httpData={selectedHTTPData!} />}
             />
           </Routes>
         </Content>
-        <Footer style={{ textAlign: "center", backgroundColor: "red" }}>Use Case API Playground ©2023 Created by Mirza Akhena</Footer>
+        <Footer style={{ textAlign: "center", backgroundColor: "red" }}>Use Case API ©2023 Created by Mirza Akhena</Footer>
       </Layout>
     </Layout>
   );
 };
 
-export default ApiPlaygroundLayout;
+export default UsecaseApiLayout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
