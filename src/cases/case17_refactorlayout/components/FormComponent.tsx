@@ -2,7 +2,7 @@ import { Form, theme } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useEffect } from "react";
-import { updateToStorage } from "../layout/UsecaseApiContentLayout";
+import { updateToStorage } from "../layout/ContentLayout";
 import { HTTPData } from "../model/data_http";
 import { InputType } from "../model/data_type";
 import { dateTimeFormat } from "../util/constant";

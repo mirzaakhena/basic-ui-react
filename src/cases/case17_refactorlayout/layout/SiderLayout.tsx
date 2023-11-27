@@ -6,13 +6,13 @@ import { Content, Footer } from "antd/es/layout/layout";
 import { useState } from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
 import { HTTPData, Tags } from "../model/data_http";
-import UsecaseApiContentLayout from "./UsecaseApiContentLayout";
+import UsecaseApiContentLayout from "./ContentLayout";
 
 interface Props {
   tags: Tags[];
 }
 
-const UsecaseApiLayout = (props: Props) => {
+const ContentLayout = (props: Props) => {
   //
 
   const [collapsed, setCollapsed] = useState(false);
@@ -83,7 +83,7 @@ const UsecaseApiLayout = (props: Props) => {
   );
 };
 
-export default UsecaseApiLayout;
+export default ContentLayout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 

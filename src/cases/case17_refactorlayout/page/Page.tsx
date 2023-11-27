@@ -1,14 +1,6 @@
-import HeaderLayout from "../layout/HeaderLayout";
+import MainLayout from "../layout/MainLayout";
 
-const Page = () => {
-  //
-
-  return (
-    <>
-      <HeaderLayout />
-    </>
-  );
-};
+const Page = () => <MainLayout />;
 
 export default Page;
 

@@ -11,7 +11,7 @@ interface Props {
   httpData: HTTPData;
 }
 
-const UsecaseApiContentLayout = (props: Props) => {
+const ContentLayout = (props: Props) => {
   //
 
   const {
@@ -193,7 +193,7 @@ const UsecaseApiContentLayout = (props: Props) => {
   );
 };
 
-export default UsecaseApiContentLayout;
+export default ContentLayout;
 
 export const updateToStorage = (usecaseName: string, form?: FormInstance) => {
   //
