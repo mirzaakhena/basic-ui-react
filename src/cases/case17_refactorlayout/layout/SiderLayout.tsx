@@ -12,6 +12,8 @@ interface Props {
   tags: Tags[];
 }
 
+const sidebarDefaultWidth = 340;
+
 const ContentLayout = (props: Props) => {
   //
 
@@ -45,7 +47,7 @@ const ContentLayout = (props: Props) => {
       <Sider
         collapsible
         collapsed={collapsed}
-        width={260}
+        width={sidebarDefaultWidth}
         onCollapse={(value) => setCollapsed(value)}
         style={{
           position: "fixed",
@@ -62,7 +64,7 @@ const ContentLayout = (props: Props) => {
         />
       </Sider>
       <Layout>
-        <Content style={{ marginLeft: collapsed ? "80px" : "260px" }}>
+        <Content style={{ marginLeft: collapsed ? "80px" : `${sidebarDefaultWidth}px` }}>
           <Routes>
             <Route
               key="home"
@@ -77,7 +79,7 @@ const ContentLayout = (props: Props) => {
             />
           </Routes>
         </Content>
-        <Footer style={{ textAlign: "center", backgroundColor: "red" }}>Use Case API ©2023 Created by Mirza Akhena</Footer>
+        <Footer style={{ textAlign: "right" }}>Use Case API ©2023 Created by Mirza Akhena</Footer>
       </Layout>
     </Layout>
   );

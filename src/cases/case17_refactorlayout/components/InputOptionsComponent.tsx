@@ -1,10 +1,10 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { Button, Col, Divider, Form, FormInstance, Input, Row, Space, Switch, theme } from "antd";
+import { Button, Col, Divider, Form, FormInstance, Input, InputNumber, Row, Select, Space, Switch, theme } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect } from "react";
 import { updateToStorage } from "../layout/ContentLayout";
 import { HTTPData } from "../model/data_http";
-import { InputType } from "../model/data_type";
+import { EnumType, InputType } from "../model/data_type";
 import { pascalToCamel } from "../util/convert";
 import { createDebounce } from "../util/debounce";
 
@@ -155,7 +155,6 @@ function generateItem(recordInputType: Record<string, InputType>, previousField:
                     <Col>
                       <Form.Item
                         style={formItemStyle}
-                        // {...restField}
                         name={[name, "description"]}
                       >
                         <Input
@@ -168,13 +167,14 @@ function generateItem(recordInputType: Record<string, InputType>, previousField:
                     <Col flex="auto">
                       <Form.Item
                         style={formItemStyle}
-                        // {...restField}
                         name={[name, "value"]}
                       >
-                        <Input.TextArea
-                          rows={1}
-                          placeholder={"value"}
-                        />
+                        {decideInputComponent(
+                          recordInputType[fieldName],
+                          // recordInputType[fieldName].type,
+                          // recordInputType[fieldName].type === "enum" ? (recordInputType[fieldName] as EnumType).enum : undefined,
+                          onChange
+                        )}
                       </Form.Item>
                     </Col>
 
@@ -270,3 +270,27 @@ export function getQueryValue(newValue: any) {
 
   return query ? `?${query.slice(1)}` : "";
 }
+
+const decideInputComponent = (inputType: InputType, onChange?: () => void) => {
+  switch (inputType.type) {
+    case "string":
+      return <Input placeholder={"value"} />;
+    case "number":
+      return <InputNumber placeholder={"value"} />;
+    case "text":
+      return (
+        <Input.TextArea
+          rows={1}
+          placeholder={"value"}
+        />
+      );
+    case "enum":
+      return (
+        <Select
+          allowClear
+          options={inputType.enum.map((val) => ({ value: val, label: val.toString() }))}
+          onChange={onChange}
+        />
+      );
+  }
+};

@@ -7,7 +7,6 @@ import { Modal, message } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { ColumnType } from "antd/es/table/interface";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { ArrayType, ObjectType } from "../model/data_type";
 
 type Item = {
   id: string;
@@ -44,7 +43,9 @@ const TableComponent = (props: Props) => {
   const columns = (): ColumnsType<Item> => {
     //
 
-    const recInputType = ((props.httpData.response![200].content["items"] as ArrayType).items as ObjectType).properties;
+    // const recInputType = ((props.httpData.response?.[200]?.content?.["items"] as ArrayType)?.items as ObjectType)?.properties;
+
+    const recInputType = props.httpData.response?.[200]?.content;
 
     const c: ColumnType<Item>[] = [
       {
@@ -60,6 +61,7 @@ const TableComponent = (props: Props) => {
               >
                 <CopyOutlined />
               </CopyToClipboard>
+              {" - "}
               <a
                 onClick={() =>
                   Modal.info({
@@ -91,16 +93,14 @@ const TableComponent = (props: Props) => {
         continue;
       }
 
-      if (recInputType[key].type === "object" || (recInputType[key].type as string).startsWith("array")) {
+      console.log(recInputType[key].type);
+
+      if (recInputType[key].type === "object" || recInputType[key].type === "array") {
         continue;
       }
 
       //
-      c.push({
-        title: key,
-        dataIndex: key,
-        key: key,
-      });
+      c.push({ title: key, dataIndex: key, key: key });
     }
 
     return c;

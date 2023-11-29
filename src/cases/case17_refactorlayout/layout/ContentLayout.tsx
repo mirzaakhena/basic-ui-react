@@ -118,6 +118,7 @@ const ContentLayout = (props: Props) => {
           background: colorBgContainer,
           display: "flex",
           margin: "0px",
+          minHeight: "500px",
         }}
       >
         <Space.Compact
