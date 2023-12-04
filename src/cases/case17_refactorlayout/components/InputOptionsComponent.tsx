@@ -1,10 +1,10 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { Button, Col, Divider, Form, FormInstance, Input, InputNumber, Row, Select, Space, Switch, theme } from "antd";
+import { Button, Checkbox, Col, Divider, Form, FormInstance, Input, InputNumber, Row, Select, Space, Switch, theme } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect } from "react";
 import { updateToStorage } from "../layout/ContentLayout";
 import { HTTPData } from "../model/data_http";
-import { EnumType, InputType } from "../model/data_type";
+import { InputType } from "../model/data_type";
 import { pascalToCamel } from "../util/convert";
 import { createDebounce } from "../util/debounce";
 
@@ -164,19 +164,7 @@ function generateItem(recordInputType: Record<string, InputType>, previousField:
                       </Form.Item>
                     </Col>
 
-                    <Col flex="auto">
-                      <Form.Item
-                        style={formItemStyle}
-                        name={[name, "value"]}
-                      >
-                        {decideInputComponent(
-                          recordInputType[fieldName],
-                          // recordInputType[fieldName].type,
-                          // recordInputType[fieldName].type === "enum" ? (recordInputType[fieldName] as EnumType).enum : undefined,
-                          onChange
-                        )}
-                      </Form.Item>
-                    </Col>
+                    <Col flex="auto">{decideInputComponent(name, recordInputType[fieldName], onChange)}</Col>
 
                     <Col>
                       <Form.Item style={formItemStyle}>
@@ -271,26 +259,103 @@ export function getQueryValue(newValue: any) {
   return query ? `?${query.slice(1)}` : "";
 }
 
-const decideInputComponent = (inputType: InputType, onChange?: () => void) => {
+// const decideInputComponent = (inputType: InputType, onChange?: () => void) => {
+//   switch (inputType.type) {
+//     case "string":
+//       return <Input placeholder={"value"} />;
+//     case "number":
+//       return <InputNumber placeholder={"value"} />;
+//     case "text":
+//       return (
+//         <Input.TextArea
+//           rows={1}
+//           placeholder={"value"}
+//         />
+//       );
+//     case "enum":
+//       return (
+//         <Select
+//           allowClear
+//           options={inputType.enum.map((val) => ({ value: val, label: val.toString() }))}
+//           onChange={onChange}
+//         />
+//       );
+//     case "array":
+//       return <Input placeholder={"value"} />;
+
+//     case "boolean":
+//       return <Checkbox />; // TODO put Form Item here!!!
+//   }
+// };
+
+const decideInputComponent = (name: number, inputType: InputType, onChange?: () => void) => {
   switch (inputType.type) {
     case "string":
-      return <Input placeholder={"value"} />;
+      return (
+        <Form.Item
+          style={formItemStyle}
+          name={[name, "value"]}
+        >
+          <Input placeholder={"value"} />
+        </Form.Item>
+      );
+
     case "number":
-      return <InputNumber placeholder={"value"} />;
+      return (
+        <Form.Item
+          style={formItemStyle}
+          name={[name, "value"]}
+        >
+          <InputNumber placeholder={"value"} />
+        </Form.Item>
+      );
+
     case "text":
       return (
-        <Input.TextArea
-          rows={1}
-          placeholder={"value"}
-        />
+        <Form.Item
+          style={formItemStyle}
+          name={[name, "value"]}
+        >
+          <Input.TextArea
+            rows={1}
+            placeholder={"value"}
+          />
+        </Form.Item>
       );
+
     case "enum":
       return (
-        <Select
-          allowClear
-          options={inputType.enum.map((val) => ({ value: val, label: val.toString() }))}
-          onChange={onChange}
-        />
+        <Form.Item
+          style={formItemStyle}
+          name={[name, "value"]}
+        >
+          <Select
+            allowClear
+            options={inputType.enum.map((val) => ({ value: val, label: val.toString() }))}
+            onChange={onChange}
+          />
+        </Form.Item>
+      );
+
+    case "array":
+      return (
+        <Form.Item
+          style={formItemStyle}
+          name={[name, "value"]}
+        >
+          <Input placeholder={"value"} />
+        </Form.Item>
+      );
+
+    case "boolean":
+      return (
+        <Form.Item
+          style={formItemStyle}
+          name={[name, "value"]}
+          valuePropName="checked"
+        >
+          <Checkbox />
+        </Form.Item>
       );
   }
 };

@@ -141,7 +141,7 @@ const ContentLayout = (props: Props) => {
           </Button>
         </Space.Compact>
 
-        {props.httpData.usecase!.toLowerCase().endsWith("getall") ? (
+        {props.httpData.responseAsTable ? (
           <>
             <Collapse
               // bordered={false}

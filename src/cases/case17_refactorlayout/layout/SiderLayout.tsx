@@ -1,4 +1,4 @@
-import { FileOutlined, SwapRightOutlined } from "@ant-design/icons";
+import { EditOutlined, PlayCircleFilled, TableOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Layout, Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
@@ -33,11 +33,16 @@ const ContentLayout = (props: Props) => {
     //
 
     return getItem(
-      <FileOutlined />,
+      <PlayCircleFilled />,
       menuItem.tag,
       menuItem.tag,
       menuItem.httpDatas.map((c) => {
-        return getItem(<SwapRightOutlined />, c.usecase, `/usecase/${menuItem.tag}/${c.usecase}`);
+        return getItem(
+          //
+          c.responseAsTable ? <TableOutlined /> : <EditOutlined />,
+          c.usecase,
+          `/usecase/${menuItem.tag}/${c.usecase}`
+        );
       })
     );
   });
@@ -79,7 +84,7 @@ const ContentLayout = (props: Props) => {
             />
           </Routes>
         </Content>
-        <Footer style={{ textAlign: "right" }}>Use Case API ©2023 Created by Mirza Akhena</Footer>
+        <Footer style={{ textAlign: "right" }}>Controller API © 2023 Created by Mirza Akhena</Footer>
       </Layout>
     </Layout>
   );
@@ -95,6 +100,7 @@ function getItem(icon: JSX.Element, label: React.ReactNode, key: React.Key, chil
   return {
     key,
     icon,
+
     children,
     label,
     itemIcon: <NavLink to={`${key}`} />,
