@@ -93,8 +93,6 @@ const TableComponent = (props: Props) => {
         continue;
       }
 
-      console.log(recInputType[key].type);
-
       if (recInputType[key].type === "object" || recInputType[key].type === "array") {
         continue;
       }

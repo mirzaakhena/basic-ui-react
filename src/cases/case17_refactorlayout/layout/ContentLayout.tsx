@@ -72,8 +72,6 @@ const ContentLayout = (props: Props) => {
       }
 
       body = httpVariable["body"] && JSON.stringify(httpVariable["body"]);
-
-      console.log({ method: methodUrl }, urlPathValue, { body }, { headers });
     }
 
     const response = await fetch(urlPathValue!, {
