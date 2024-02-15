@@ -35,5 +35,8 @@ export type HTTPData = {
   body?: Record<string, InputType>;
   local?: Record<string, FuncType>;
   response?: Record<ResponseCode, ResponseType>;
+  responseBody?: Record<string, InputType>;
+  responseHeaders?: Record<string, InputType>;
+  responseLocal?: Record<string, FuncType>;
   responseAsTable?: boolean;
 };

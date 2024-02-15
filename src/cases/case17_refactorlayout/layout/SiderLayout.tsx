@@ -6,7 +6,7 @@ import { Content, Footer } from "antd/es/layout/layout";
 import { useState } from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
 import { HTTPData, Tags } from "../model/data_http";
-import UsecaseApiContentLayout from "./ContentLayout";
+import ContentLayout from "./ContentLayout";
 
 interface Props {
   tags: Tags[];
@@ -14,7 +14,7 @@ interface Props {
 
 const sidebarDefaultWidth = 340;
 
-const ContentLayout = (props: Props) => {
+const SiderLayout = (props: Props) => {
   //
 
   const [collapsed, setCollapsed] = useState(false);
@@ -80,7 +80,7 @@ const ContentLayout = (props: Props) => {
             <Route
               key="usecase"
               path={"/usecase/:tagName/:usecaseName"}
-              element={<UsecaseApiContentLayout httpData={selectedHTTPData!} />}
+              element={<ContentLayout httpData={selectedHTTPData!} />}
             />
           </Routes>
         </Content>
@@ -90,7 +90,7 @@ const ContentLayout = (props: Props) => {
   );
 };
 
-export default ContentLayout;
+export default SiderLayout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
